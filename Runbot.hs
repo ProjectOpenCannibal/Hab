@@ -5,6 +5,8 @@ import Control.Monad.Reader
 import Network
 import System.IO
 import Text.Printf
+--Hide catch from w/in prelude as it's imported in Control.Exception
+import Prelude hiding (catch)
 
 --Local modules
 import Listen
@@ -14,10 +16,9 @@ import Write
 runbot :: IO ()
 runbot = bracket connect disconnect loop
 	where
-	  disconnect	= hClose . socket
-	  --Old.Exception isn't loading in Arch so we're leaving the catch out of
-	  --this for now.
-	  loop st		= runReaderT run st
+	  disconnect = hClose . socket
+	  --Need to wrap my head around a proper IOException catch for this
+	  loop st = runReaderT run st
 
 -- Join a channel and initialize our listener
 run :: Net ()
