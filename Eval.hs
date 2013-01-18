@@ -9,6 +9,6 @@ import Write
 
 -- Evaluate a command
 eval :: String -> Net ()
-eval 	"!quit"					= write "QUIT" ":Exiting" >> io (exitWith ExitSuccess)
-eval x | "!id " `isPrefixOf` x	= privmsg (drop 4 x)
-eval	_						= return () -- ignore everything else
+eval "!quit" = write "QUIT" ":Exiting" >> io (exitWith ExitSuccess)
+eval x | "!id " `isPrefixOf` x = privmsg (drop 4 x)
+eval _ = return () -- ignore everything else
