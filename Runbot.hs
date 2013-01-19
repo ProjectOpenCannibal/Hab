@@ -20,7 +20,7 @@ runbot = bracket connect disconnect loop
 	  --Need to wrap my head around a proper IOException catch for this
 	  loop st = runReaderT run st
 
--- Join a channel and initialize our listener
+-- Join our primary channel and initialize our listener
 run :: Net ()
 run = do
 	write "NICK" nick
