@@ -26,9 +26,13 @@ import Write
 --
 -- Store the channel so we know where to respond if a response is required
 --
-eval :: String -> Net ()
-eval "!quit" = write "QUIT" ":Exiting" >> io (exitWith ExitSuccess)
-eval x | "!part " `isPrefixOf` x = write "PART" (drop 5 x)
-eval x | "!id " `isPrefixOf` x = privmsg (drop 4 x)
-eval x | "!join " `isPrefixOf` x = write "JOIN" (drop 6 x)
-eval _ = return () -- ignore everything else
+
+-- SndNick -> SndFrom (channel/privchat etc) -> content (command)
+eval :: String -> String -> String -> Net ()
+-- Non-argumental commands (keep in alpha)
+eval _ _ "!quit" = write "QUIT" ":Exiting" >> io (exitWith ExitSuccess)
+-- Single arg commands
+eval "IngCr3at1on" _ x | "!id " `isPrefixOf` x = privmsg y (drop 4 x) 
+eval "IngCr3at1on" _ x | "!join " `isPrefixOf` x = write "JOIN" (drop 6 x)
+eval "IngCr3at1on" _ x | "!part " `isPrefixOf` x = write "PART" (drop 5 x)
+eval _ _ _ = return () -- ignore everything else

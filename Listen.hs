@@ -15,12 +15,11 @@ listen :: Handle -> Net ()
 listen h = forever $ do
 	s <- init `fmap` io (hGetLine h)
 	io (putStrLn s)
-	if ping s then pong s else eval (clean s)
+	if ping s then pong s else eval (sndnick s) (sndfrom s) (content s)
   where
 	forever a = a >> forever a
-	-- Need to rewrite this to pass sender, channel (received from) and content
-	-- to eval instead of simply the final content after the second colon
-	-- see eval for more information on how I would 'like' to handle this
-	clean	= drop 1 . dropWhile (/= ':') . drop 1
+	sndnick = drop 1 . takeWhile (/= '!')
+	sndfrom = dropWhile (/= ' ') . dropWhile (/= ' ') . takeWhile (/= ' ')
+	content = drop 1 . dropWhile (/= ':') . drop 1
 	ping x	= "PING :" `isPrefixOf` x
 	pong x	= write "PONG" (':' : drop 6 x)
