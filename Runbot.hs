@@ -24,6 +24,6 @@ runbot = bracket connect disconnect loop
 run :: Net ()
 run = do
 	write "NICK" nick
-	write "USER" (nick++" 0 * :POC Bot")
+	write "USER" (nick++" 0 * :"++realname)
 	write "JOIN" chan
 	asks socket >>= listen

@@ -1,4 +1,4 @@
-module Socket (server, port, chan, nick, Bot(socket), Net, connect, io) where
+module Socket (server, port, chan, nick, realname, Bot(socket), Net, connect, io) where
 
 import Control.Exception
 import Control.Monad.Reader
@@ -10,7 +10,8 @@ import Text.Printf
 server	= "irc.freenode.org"
 port	= 6667
 chan	= "#projectopencannibal"
-nick	= "CannibalismBot"
+nick	= "Hab"
+realname = "ProjectOpenCannibal Haskell Based Bot | https://github.com/ProjectOpenCannibal/CannibalismBot"
 
 -- Thread our socket actions through a Net monad
 data Bot = Bot { socket :: Handle }
