@@ -15,7 +15,7 @@ eval :: String -> String -> String -> Net ()
 -- I'm unable to make this apply to a list of users instead of the single option
 eval "IngCr3at1on" _ "!quit" = write "QUIT" ":Reloading, hopefully..." >> io (exitWith ExitSuccess)
 
--- Single arg commands
+-- Single arg commands (keep in alpha)
 eval "IngCr3at1on" _ x
 -- I'm unable to make this apply to a list of users instead of the single option
 -- for now the only commands included are ones we would want to limit to admins
@@ -24,6 +24,9 @@ eval "IngCr3at1on" _ x
     | "!id " `isPrefixOf` x = privmsg (drop 4 x)
     | "!join " `isPrefixOf` x = write "JOIN" (drop 6 x)
     | "!kick " `isPrefixOf` x = write "KICK" (drop 6 x)
+    -- a cheap implementation of message, only works if you manually do the
+    -- channel or nick as #example : <message>
+    | "!msg " `isPrefixOf` x = write "PRIVMSG" (drop 5 x)
     | "!part " `isPrefixOf` x = write "PART" (drop 6 x)
 
 eval _ _ _ = return () -- ignore everything else
