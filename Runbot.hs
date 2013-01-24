@@ -27,4 +27,13 @@ run = do
     write "NICK" nick
     write "USER" (nick++" 0 * :"++realname)
     write "JOIN" chan
+    --identify
     asks socket >>= listen
+
+-- This doesn't work, seems like it should though according to the man for
+-- readFile...
+--identify :: Net ()
+--identify = do
+    --write "PRIVMSG" ("nickserv : identify " ++password)
+  --where
+    --password <- readFile "/home/git/haskell_bot/.password"
