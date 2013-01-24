@@ -11,7 +11,7 @@ server = "irc.freenode.org"
 port = 6667
 chan = "#projectopencannibal"
 nick = "Hab"
-realname = "ProjectOpenCannibal Haskell Based Bot | https://github.com/ProjectOpenCannibal/CannibalismBot"
+realname = "Hab (Haskell Bot), a simple FOSS IRC bot (obviously written in Haskell) | https://github.com/ProjectOpenCannibal/CannibalismBot"
 
 -- Thread our socket actions through a Net monad
 data Bot = Bot { socket :: Handle }
