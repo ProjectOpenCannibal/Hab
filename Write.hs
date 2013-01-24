@@ -9,9 +9,9 @@ import Socket
 -- Send a message to the server (only if it's initialized)
 write :: String -> String -> Net ()
 write s t = do
-	h <- asks socket
-	io $ hPrintf h "%s %s\r\n" s t
-	io $ printf    "> %s %s\n" s t
+    h <- asks socket
+    io $ hPrintf h "%s %s\r\n" s t
+    io $ printf    "> %s %s\n" s t
 
 -- Wrap write up as a private message
 privmsg :: String -> Net ()  	
