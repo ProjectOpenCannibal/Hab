@@ -15,15 +15,16 @@ import Write
 
 runbot :: IO ()
 runbot = bracket connect disconnect loop
-	where
-	  disconnect = hClose . socket
-	  --Need to wrap my head around a proper IOException catch for this
-	  loop st = runReaderT run st
+  where
+    disconnect = hClose . socket
+    -- To my understanding this should work, it does not...
+    -- loop st = catch (runReaderT run st) (\e -> const (return ((), st)) (e :: IOException))
+    loop st = runReaderT run st
 
 -- Join our primary channel and initialize our listener
 run :: Net ()
 run = do
-	write "NICK" nick
-	write "USER" (nick++" 0 * :"++realname)
-	write "JOIN" chan
-	asks socket >>= listen
+    write "NICK" nick
+    write "USER" (nick++" 0 * :"++realname)
+    write "JOIN" chan
+    asks socket >>= listen
