@@ -66,7 +66,7 @@ eval "FMKilo-d2usc" _ x
 -- use privmsg (used by ID)for this purpose (for now); will cause message to go
 -- to primary channel only. Source is also in Realname so this shouldn't be too
 -- big of an issue as is
-eval _ _ "!source" = privmsg "https://github.com/ProjectOpenCannibal/CannibalismBot/commits/"
+eval _ _ "!source" = privmsg source
 
 --eval "NickServ" _ ab
     -- I was trying to get it to auto authenticate for my bot... No such luck... Perhaps there is another way. 
