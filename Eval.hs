@@ -59,6 +59,12 @@ eval "FMKilo-d2usc" _ x
     | "!msg " `isPrefixOf` x = write "PRIVMSG" (drop 5 x)
     | "!part " `isPrefixOf` x = write "PART" (drop 6 x)
 
+-- Respond to everyone...
+-- Post source / commit history link
+-- use privmsg (used by ID)for this purpose (for now); will cause message to go
+-- to primary channel only. Source is also in Realname so this shouldn't be too
+-- big of an issue as is
+eval _ _ "!source" = privmsg "https://github.com/ProjectOpenCannibal/CannibalismBot/commits/"
 
 --eval "NickServ" _ ab
     -- I was trying to get it to auto authenticate for my bot... No such luck... Perhaps there is another way. 
