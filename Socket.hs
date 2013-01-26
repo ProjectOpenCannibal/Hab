@@ -13,8 +13,8 @@ port = 6667
 chan = "#projectopencannibal"
 nick = "Hab"
 realname = "Hab (Haskell Bot), a simple FOSS IRC bot (obviously written in Haskell) | https://github.com/ProjectOpenCannibal/CannibalismBot"
-deftopic = "Project Open Cannibal and Cannibal Open Touch Recovery | http://www.projectopencannibal.net/ || Say hello to Hab (Haskell Bot) | https://github.com/ProjectOpenCannibal/CannibalismBot"
-source = "https://github.com/ProjectOpenCannibal/CannibalismBot/commits/"
+deftopic = "Project Open Cannibal and Cannibal Open Touch Recovery | http://www.projectopencannibal.net/ || Say hello to Hab (Haskell Bot) | https://github.com/ProjectOpenCannibal/Hab"
+source = "https://github.com/ProjectOpenCannibal/Hab/commits/"
 
 -- Thread our socket actions through a Net monad
 data Bot = Bot { socket :: Handle }
