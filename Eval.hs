@@ -14,7 +14,7 @@ eval :: String -> String -> String -> Net ()
 -- Non-argumental commands (keep in alpha)
 -- I'm unable to make this apply to a list of users instead of the single option
 eval "IngCr3at1on" _ "!quit" = write "QUIT" ":Reloading, hopefully..." >> io (exitWith ExitSuccess)
-eval "IngCr3at1on" _ "!deftopic" = write ("PRIVMSG chanserv :topic "++chan) deftopic
+eval "IngCr3at1on" _ "!deftopic" = write ("TOPIC "++chan) (" :"++deftopic)
 
 -- Single arg commands (keep in alpha)
 eval "IngCr3at1on" _ x
@@ -28,7 +28,7 @@ eval "IngCr3at1on" _ x
     -- channel or nick as #example :<message>
     | "!msg " `isPrefixOf` x = write "PRIVMSG" (drop 5 x)
     | "!part " `isPrefixOf` x = write "PART" (drop 6 x)
-    | "!topic " `isPrefixOf` x = write ("PRIVMSG chanserv :topic "++chan) (drop 7 x)
+    | "!topic " `isPrefixOf` x = write ("TOPIC "++chan) (" :"++drop 7 x)
 
 -- In lou of a proper list, overwrite eval per FMKilo's recommendation.
 eval "FMKilo" _ x
