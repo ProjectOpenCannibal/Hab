@@ -23,6 +23,7 @@ eval "IngCr3at1on" _ x
     | "!id " `isPrefixOf` x = privmsg (drop 4 x)
     | "!join " `isPrefixOf` x = write "JOIN" (drop 6 x)
     | "!kick " `isPrefixOf` x = write "KICK" (drop 6 x)
+    | "!me " `isPrefixOf` x = privmsg ("\001ACTION "++(drop 4 x)++"\001")
     -- a cheap implementation of message, only works if you manually do the
     -- channel or nick as #example :<message>
     | "!msg " `isPrefixOf` x = write "PRIVMSG" (drop 5 x)
@@ -34,6 +35,7 @@ eval "FMKilo" _ x
     | "!id " `isPrefixOf` x = privmsg (drop 4 x)
     | "!join " `isPrefixOf` x = write "JOIN" (drop 6 x)
     | "!kick " `isPrefixOf` x = write "KICK" (drop 6 x)
+    | "!me " `isPrefixOf` x = privmsg ("\001ACTION "++(drop 4 x)++"\001")
     -- a cheap implementation of message, only works if you manually do the
     -- channel or nick as #example : <message>
     | "!msg " `isPrefixOf` x = write "PRIVMSG" (drop 5 x)
@@ -43,6 +45,7 @@ eval "FMKilo-d2usc" _ x
     | "!id " `isPrefixOf` x = privmsg (drop 4 x)
     | "!join " `isPrefixOf` x = write "JOIN" (drop 6 x)
     | "!kick " `isPrefixOf` x = write "KICK" (drop 6 x)
+    | "!me " `isPrefixOf` x = privmsg ("\001ACTION "++(drop 4 x)++"\001")
     -- a cheap implementation of message, only works if you manually do the
     -- channel or nick as #example : <message>
     | "!msg " `isPrefixOf` x = write "PRIVMSG" (drop 5 x)
