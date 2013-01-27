@@ -27,6 +27,7 @@ eval "IngCr3at1on" _ x
     -- a cheap implementation of message, only works if you manually do the
     -- channel or nick as #example :<message>
     | "!msg " `isPrefixOf` x = write "PRIVMSG" (drop 5 x)
+    -- | "!msg" `isPrefixOf` x = write "PRIVMSG" ((getChan x)++":"++(getMsg x))
     | "!part " `isPrefixOf` x = write "PART" (drop 6 x)
     | "!topic " `isPrefixOf` x = write ("TOPIC "++chan) (" :"++drop 7 x)
 
@@ -67,3 +68,11 @@ eval "FMKilo-d2usc" _ x
 eval _ _ "!source" = privmsg source
 
 eval _ _ _ = return () -- ignore everything else
+
+-- Grab a destination channel from our message
+--getChan :: String -> String ()
+--getChan x = takeWhile (/= ':')
+
+-- And the message itself
+--getMsg :: String -> String ()
+--getMsg x = (dropWhile (/= ":") . (drop 1 x))
