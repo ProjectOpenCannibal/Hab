@@ -16,3 +16,5 @@ write s t = do
 -- Wrap write up as a private message
 privmsg :: String -> Net ()  	
 privmsg s = write "PRIVMSG" (chan ++ " :" ++ s)
+
+
