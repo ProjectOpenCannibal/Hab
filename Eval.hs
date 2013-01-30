@@ -13,13 +13,19 @@ import Write
 eval :: String -> String -> String -> Net ()
 -- Non-argumental commands (keep in alpha)
 -- I'm unable to make this apply to a list of users instead of the single option
-eval "FMKilo" _ "!quit" = write "QUIT" ":Reloading, hopefully..." >> io (exitWith ExitSuccess)
 eval y _ "Hello FMKilo-bot" = privmsg ("Hello "++y)
 eval y _ "hello FMKilo-bot" = privmsg ("Hello "++y)
 eval y _ "Hello fmkilo-bot" = privmsg ("Hello "++y)
 eval y _ "hello fmkilo-bot" = privmsg ("Hello "++y)
 eval "FMKilo" _ "!deftopic" = write ("TOPIC "++chan) (" :"++deftopic)
 eval _ _ "brick" = privmsg "boned"
+eval y _ x
+    | "lol" `isPrefixOf` x = write ("KICK #kf2-dev "++y ++" :NO LOL IN MY CHAN") (drop 700000 x)
+--    | "Hey Hashcode" `isPrefixOf` x = write ("PRIVMSG #kf2-dev :You should know he's probably not even here. Fuckin' shit man, "++y ++", get your head in the game!!") (drop 70000 x)
+--    | "hey hashcode" `isPrefixOf` x = write ("PRIVMSG #kf2-dev :You should know he's probably not even here. Fuckin' shit man, "++y ++", get your head in the game!!") (drop 70000 x)
+--    | "hey Hashcode" `isPrefixOf` x = write ("PRIVMSG #kf2-dev :You should know he's probably not even here. Fuckin' shit man, "++y ++", get your head in the game!!") (drop 70000 x)
+--    | "Hey hashcode" `isPrefixOf` x = write ("PRIVMSG #kf2-dev :You should know he's probably not even here. Fuckin' shit man, "++y ++", get your head in the game!!") (drop 70000 x)
+eval _ _ "phone booth" = privmsg "it's a police box! sheesh :P"
 eval _ _ "What is the answer to life, the universe and everything?" = privmsg "forty-two"
 eval _ _ x
 --    | "FMKilo" `isPrefixOf` x = write "PRIVMSG #kf2-dev :FMKilo is a fucking badass!!!" (drop 70000 x)
@@ -68,6 +74,6 @@ eval "IngCr3at1on" _ x
     | "!msg " `isPrefixOf` x = write "PRIVMSG" (drop 5 x)
     | "!topic " `isPrefixOf` x = write ("PRIVMSG chanserv :topic "++chan) (drop 7 x)
 eval _ _ "!source" = privmsg source
-
+eval "FMKilo" _ "!quit" = write "QUIT" ":Reloading, hopefully..." >> io (exitWith ExitSuccess)
 eval _ _ _ = return () -- ignore everything else
---"I think I see how it is, I'm not a yoyo"
+
