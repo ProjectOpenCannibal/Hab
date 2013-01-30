@@ -23,7 +23,10 @@ eval _ _ "brick" = privmsg "boned"
 eval _ _ "What is the answer to life, the universe and everything?" = privmsg "forty-two"
 eval _ _ x
 --    | "FMKilo" `isPrefixOf` x = write "PRIVMSG #kf2-dev :FMKilo is a fucking badass!!!" (drop 70000 x)
+    | "wait" `isPrefixOf` x = write "PRIVMSG #kf2-dev :No, don't stop, go harder!!!" (drop 70000 x)
+    | "negros" `isPrefixOf` x = write "PRIVMSG #kf2-dev :Hey now!!?" (drop 70000 x)
     | "penises" `isPrefixOf` x = write "PRIVMSG #kf2-dev :Alright, I'm done with all of these dick references... You can all leave now." (drop 70000 x)
+    | "moorom" `isPrefixOf` x = write "PRIVMSG #kf2-dev :this monster energy tastes abnormally sweet" (drop 70000 x)
 -- Single arg commands (keep in alpha)
 eval "FMKilo" _ x
 -- I'm unable to make this apply to a list of users instead of the single option

@@ -13,7 +13,7 @@ chan = "#KF2-dev"
 nick = "FMKilo-bot"
 realname = "FMKilo"
 deftopic = "TWEEZERMOD IS GOD!!! CABLELESS FTW!!! com.powerpoint45.FMKilo!!! MooRom!!! COMMUNAL BATHS FTW!!! KLP ROM FOR KF2? HASHFIRE!!! NO BRONIES ALLOWED!!! ON ENTRY, SAY, 'hello FMKilo-bot'"
-source = "https://github.com/ProjectOpenCannibal/Hab/"
+source = "https://github.com/FMKilo/Hab/commits/master"
 -- Thread our socket actions through a Net monad
 data Bot = Bot { socket :: Handle }
 type Net = ReaderT Bot IO
