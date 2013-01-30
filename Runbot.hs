@@ -13,11 +13,6 @@ import Listen
 import Socket
 import Write
 
--- This actually appears to work for setting a password variable from file but
--- I'm failing ot properly utilize it so leave it out for now
---password :: IO String
---password = readFile ".password"
-
 runbot :: IO ()
 runbot = bracket connect disconnect loop
   where
@@ -32,11 +27,17 @@ run = do
     write "NICK" nick
     write "USER" (nick++" 0 * :"++realname)
     write "JOIN" chan
-    --identify
+    identify
     asks socket >>= listen
 
--- This doesn't work because an IO String is not a String and I'm having issues
--- making Haskell not argue about my using it as such.
---identify :: Net ()
---identify = do
-    --write "PRIVMSG" ("nickserv :identify "++password)
+
+--password = do
+  --  password <- readFile ".password"
+    --password :: IO String
+    --write "PRIVMSG" ("nickserv : identify " ++password)
+identify :: Net ()
+identify = do
+    password <- io (readFile ".password")
+    write "PRIVMSG" ("nickserv :identify " ++password)
+
+
