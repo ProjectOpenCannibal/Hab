@@ -65,9 +65,10 @@ eval _ _ "!source" = privmsg source
 -- send these directly to #kf2-dev for now, we need to to fix privmsg to work
 -- with multichannels though. (keeping these together and thus screwing up the
 -- alphabetical order, yet another reason to fix privmsg)
-eval _ _ "!adb" = write "PRIVMSG #kf2-dev :" udevsetup
-eval _ _ "!fastboot" = write "PRIVMSG #kf2-dev :" udevsetup
-eval _ _ "!udev" = write "PRIVMSG #kf2-dev :" udevsetup
+eval _ _ "!adb" = write "PRIVMSG" ("#kf2-dev :"++udevsetup)
+eval _ _ "!cli" = write "PRIVMSG" "#kf2-dev :http://terokarvinen.com/command_line.html"
+eval _ _ "!fastboot" = write "PRIVMSG" ("#kf2-dev :"++udevsetup)
+eval _ _ "!udev" = write "PRIVMSG" ("#kf2-dev :"++udevsetup)
 
 eval _ _ _ = return () -- ignore everything else
 
