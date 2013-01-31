@@ -52,14 +52,6 @@ eval "FMKilo-d2usc" _ x
     | "!msg " `isPrefixOf` x = write "PRIVMSG" (drop 5 x)
     | "!part " `isPrefixOf` x = write "PART" (drop 6 x)
 
--- Modify identify command from FMKilo bot (works but being left out do to not
--- having a proper way to grab the PW from text and I'm not going to remember
--- to remove it from the source everytime I want to push a change)
--- To utilize uncomment and add a password variable towards the top of the file
--- Please note this will change.
---eval "NickServ" _ x
---    | "This nickname is registered." `isPrefixOf` x = write "PRIVMSG nickserv :identify" password
-
 -- Respond to everyone...
 -- Post source / commit history link
 -- use privmsg (used by ID)for this purpose (for now); will cause message to go
