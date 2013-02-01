@@ -18,6 +18,7 @@ eval :: String -> String -> String -> Net ()
 -- Non-argumental commands (keep in alpha)
 -- I'm unable to make this apply to a list of users instead of the single option
 eval "IngCr3at1on" _ "!deftopic" = write ("TOPIC "++chan) (" :"++deftopic)
+eval "IngCr3at1on" _ "!opme" = write "MODE" (chan++" +o IngCr3at1on")
 eval "IngCr3at1on" _ "!quit" = write "QUIT" ":Reloading, hopefully..." >> io (exitWith ExitSuccess)
 
 -- Single arg commands (keep in alpha)
@@ -34,7 +35,6 @@ eval "IngCr3at1on" _ x
     | "!msg " `isPrefixOf` x = write "PRIVMSG" (drop 5 x)
     -- | "!msg" `isPrefixOf` x = write "PRIVMSG" ((getChan x)++":"++(getMsg x))
     | "!op " `isPrefixOf` x = write ("MODE "++chan++" +o") (drop 4 x)
-    | "!opme" `isPrefixOf` x = write "MODE" (chan++" +o IngCr3at1on")
     | "!part " `isPrefixOf` x = write "PART" (drop 6 x)
     | "!topic " `isPrefixOf` x = write ("TOPIC "++chan) (" :"++drop 7 x)
 
