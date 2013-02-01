@@ -24,6 +24,7 @@ eval "IngCr3at1on" _ "!quit" = write "QUIT" ":Reloading, hopefully..." >> io (ex
 eval "IngCr3at1on" _ x
     -- remember this is directed to the primary channel only; use msg for
     -- everything else.
+    | "!deop " `isPrefixOf` x = write ("MODE "++chan++" -o") (drop 6 x)
     | "!id " `isPrefixOf` x = privmsg (drop 4 x)
     | "!join " `isPrefixOf` x = write "JOIN" (drop 6 x)
     | "!kick " `isPrefixOf` x = write "KICK" (drop 6 x)
@@ -32,6 +33,8 @@ eval "IngCr3at1on" _ x
     -- channel or nick as #example :<message>
     | "!msg " `isPrefixOf` x = write "PRIVMSG" (drop 5 x)
     -- | "!msg" `isPrefixOf` x = write "PRIVMSG" ((getChan x)++":"++(getMsg x))
+    | "!op " `isPrefixOf` x = write ("MODE "++chan++" +o") (drop 4 x)
+    | "!opme" `isPrefixOf` x = write "MODE" (chan++" +o IngCr3at1on")
     | "!part " `isPrefixOf` x = write "PART" (drop 6 x)
     | "!topic " `isPrefixOf` x = write ("TOPIC "++chan) (" :"++drop 7 x)
 
