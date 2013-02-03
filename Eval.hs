@@ -9,6 +9,7 @@ import Write
 
 -- Define any strings that we use on a regular basis (links etc)
 -- should really go in a resource file rather than hard coded into the source
+clilink = "http://terokarvinen.com/command_line.html"
 udevsetup = "http://forum.xda-developers.com/showthread.php?t=1475740"
 
 -- Evaluate a command
@@ -60,17 +61,15 @@ eval "FMKilo-d2usc" _ _ x
     | "!part " `isPrefixOf` x = write "PART" (drop 6 x)
 
 -- Respond to everyone...
--- Post source / commit history link
--- use privmsg (used by ID)for this purpose (for now); will cause message to go
--- to primary channel only. Source is also in Realname so this shouldn't be too
--- big of an issue as is
+eval _ "#projectopencannibal" _ "!adb" = privmsg udevsetup
+eval _ "#kf2-dev" _ "!adb" = write "PRIVMSG" ("#kf2-dev :"++udevsetup)
+eval _ "#projectopencannibal" _ "!cli" = privmsg clilink
+eval _ "#kf2-dev" _ "!cli"= write "PRIVMSG" ("#kf2-dev :"++clilink)
+eval _ "#projectopencannibal" _ "!fastboot" = privmsg udevsetup
+eval _ "#kf2-dev" _ "!fastboot" = write "PRIVMSG" ("#kf2-dev :"++udevsetup)
 eval _ "#projectopencannibal" _ "!source" = privmsg source
--- send these directly to #kf2-dev for now, we need to to fix privmsg to work
--- with multichannels though. (keeping these together and thus screwing up the
--- alphabetical order, yet another reason to fix privmsg)
-eval _ _ _ "!adb" = write "PRIVMSG" ("#kf2-dev :"++udevsetup)
-eval _ _ _ "!cli" = write "PRIVMSG" "#kf2-dev :http://terokarvinen.com/command_line.html"
-eval _ _ _ "!fastboot" = write "PRIVMSG" ("#kf2-dev :"++udevsetup)
-eval _ _ _ "!udev" = write "PRIVMSG" ("#kf2-dev :"++udevsetup)
+eval _ "#kf2-dev" _ "!source" = write "PRIVMSG" ("#kf2-dev :"++source)
+eval _ "#projectopencannibal" _ "!udev" = privmsg udevsetup
+eval _ "#kf2-dev" _ "!udev" = write "PRIVMSG" ("#kf2-dev :"++udevsetup)
 
 eval _ _ _ _ = return () -- ignore everything else
