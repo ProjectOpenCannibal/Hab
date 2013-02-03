@@ -92,7 +92,7 @@ evalcmd :: String -> String -> String -> Net ()
 evalcmd u o c = do
     if isPriv o
         then evalprivcmd u c
-        else evalchancmd o c
+        else evalchancmd u o c
   where
     isPriv x = "Hab" `isInfixOf` x
  
@@ -111,16 +111,16 @@ evalprivcmd _ _ = return ()
  
 -- Evaluate in channel commands
 --
--- Origin -> content (command)
-evalchancmd :: String -> String -> Net ()
-evalchancmd o c
+-- Sndnick (user) -> Origin -> content (command)
+evalchancmd :: String -> String -> String -> Net ()
+evalchancmd u o c
     | "!adb" `isInfixOf` c = write "PRIVMSG" (o++" :"++udevsetup)
     | "!cli" `isInfixOf` c = write "PRIVMSG" (o++" :"++clilink)
     | "!commands" `isInfixOf` c = listcom o
     | "!fastboot" `isInfixOf` c = write "PRIVMSG" (o++" :"++udevsetup)
     | "!source" `isInfixOf` c = write "PRIVMSG" (o++" :"++source)
     | "!udev" `isInfixOf` c = write "PRIVMSG" (o++" :"++udevsetup)
-evalchancmd _ _ = return ()
+evalchancmd _ _ _ = return ()
 
 -- Evaluate a MODE change
 -- origin -> modetype (voice, etc) -> modwho (changes whos mode?)
