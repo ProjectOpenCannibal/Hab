@@ -12,79 +12,115 @@ import Write
 clilink = "http://terokarvinen.com/command_line.html"
 udevsetup = "http://forum.xda-developers.com/showthread.php?t=1475740"
 
+-- Define admins and gods (gods have quit and op assignment controls)
+gods = "IngCr3at1on"
+admins = "IngCr3at1on, FMKilo"
+
 -- Evaluate a command
 --
 -- SndNick -> Origin -> Msgtype -> content (command)
+-- (we drop type for now cause nothing uses it)
 eval :: String -> String -> String -> String -> Net ()
--- Non-argumental commands (keep in alpha)
+eval u o _ c = do
+    if isGod u
+        then evalgod u o c
+        else if isAdmin u
+            then evaladmin u o c
+        else evalcmd u o c
+  where
+    isAdmin x = x `isInfixOf` admins
+    isGod x = x `isInfixOf` gods
 
--- Evaluate 'God' commands first (followed by other admin than private messages)
--- I'm unable to make this apply to a list of users instead of the single option
-eval "IngCr3at1on" "Hab" _ "~deftopic" = write ("TOPIC "++chan) (" :"++deftopic)
-eval "IngCr3at1on" "Hab" _ "~opme" = write "MODE" (chan++" +o IngCr3at1on")
-eval "IngCr3at1on" "Hab" _ "~quit" = write "QUIT" ":Reloading, hopefully..." >> io (exitWith ExitSuccess)
+-- Evaluate God commands (upon completion evaluate admin and standand commands)
+--
+-- SndNick -> Origin -> content (command)
+evalgod :: String -> String -> String -> Net ()
+evalgod u o c = do
+    if isPriv o
+        then do
+            evalgodcmd u c
+            evaladmin u o c
+        else evalcmd u o c
+  where
+    isPriv x = "Hab" `isInfixOf` x
 
-eval "IngCr3at1on" "Hab" _ x
-    -- remember this is directed to the primary channel only; use msg for
-    -- everything else.
-    | "~commands" `isInfixOf` x = listadcom "IngCr3at1on"
-    | "~deop " `isPrefixOf` x = write ("MODE "++chan++" -o") (drop 6 x)
-    | "~id " `isPrefixOf` x = privmsg (drop 4 x)
-    | "~join " `isPrefixOf` x = write "JOIN" (drop 6 x)
-    | "~kick " `isPrefixOf` x = write "KICK" (drop 6 x)
-    | "~me " `isPrefixOf` x = privmsg ("\001ACTION "++(drop 4 x)++"\001")
+-- Finish god evaluation, I'm having issues figuring out how to write this
+-- into the above function
+--
+-- SndNick -> content (command)
+evalgodcmd :: String -> String -> Net ()
+evalgodcmd u c
+    | "~deftopic" `isPrefixOf` c = write ("TOPIC"++chan) (" :"++deftopic)
+    | "~deop " `isPrefixOf` c = write ("MODE "++chan++" -o") (drop 6 c)
+    | "~op " `isPrefixOf` c = write ("MODE "++chan++" +o") (drop 4 c)
+    | "~opme" `isPrefixOf` c = write "MODE" (chan++" +o "++u)
+    | "~quit" `isPrefixOf` c = write "QUIT" ":Reloading, hopefully..." >> io (exitWith ExitSuccess)
+evalgodcmd _ _ = return ()
+ 
+-- Evaluate admin commands
+--
+-- SndNick -> Origin -> content (command)
+evaladmin :: String -> String -> String -> Net ()
+evaladmin u o c = do
+    if isPriv o
+        then do
+            evaladcmd u c
+            evalcmd u o c
+        else evalcmd u o c
+  where
+    isPriv x = "Hab" `isInfixOf` x
+
+-- Finish admin evaluation in the same way as gods
+evaladcmd :: String -> String -> Net ()
+evaladcmd u c
+    | "~commands" `isInfixOf` c = listadcom u
+    | "~id " `isPrefixOf` c = privmsg (drop 4 c)
+    | "~join " `isPrefixOf` c = write "JOIN" (drop 6 c)
+    | "~kick " `isPrefixOf` c = write "KICK" (drop 6 c)
+    | "~me " `isPrefixOf` c = privmsg ("\001ACTION "++(drop 4 c)++"\001")
     -- a cheap implementation of message, only works if you manually do the
     -- channel or nick as #example :<message>
-    | "~msg " `isPrefixOf` x = write "PRIVMSG" (drop 5 x)
-    | "~op " `isPrefixOf` x = write ("MODE "++chan++" +o") (drop 4 x)
-    | "~part " `isPrefixOf` x = write "PART" (drop 6 x)
-    | "~topic " `isPrefixOf` x = write ("TOPIC "++chan) (" :"++drop 7 x)
-
--- In lou of a proper list, overwrite eval per FMKilo's recommendation.
-eval "FMKilo" "Hab" _ x
-    | "~commands" `isInfixOf` x = listadcom "FMKilo"
-    | "~id " `isPrefixOf` x = privmsg (drop 4 x)
-    | "~join " `isPrefixOf` x = write "JOIN" (drop 6 x)
-    | "~kick " `isPrefixOf` x = write "KICK" (drop 6 x)
-    | "~me " `isPrefixOf` x = privmsg ("\001ACTION "++(drop 4 x)++"\001")
-    -- a cheap implementation of message, only works if you manually do the
-    -- channel or nick as #example : <message>
-    | "~msg " `isPrefixOf` x = write "PRIVMSG" (drop 5 x)
-    | "~part " `isPrefixOf` x = write "PART" (drop 6 x)
-
-eval "FMKilo-d2usc" "Hab" _ x
-    | "~commands" `isInfixOf` x = listadcom "FMKilo-d2usc"
-    | "~id " `isPrefixOf` x = privmsg (drop 4 x)
-    | "~join " `isPrefixOf` x = write "JOIN" (drop 6 x)
-    | "~kick " `isPrefixOf` x = write "KICK" (drop 6 x)
-    | "~me " `isPrefixOf` x = privmsg ("\001ACTION "++(drop 4 x)++"\001")
-    -- a cheap implementation of message, only works if you manually do the
-    -- channel or nick as #example : <message>
-    | "~msg " `isPrefixOf` x = write "PRIVMSG" (drop 5 x)
-    | "~part " `isPrefixOf` x = write "PART" (drop 6 x)
-
--- Evaluate private messages (only neccessary if a response is required)
-eval y "Hab" _ x
-    | "!adb" `isInfixOf` x = write "PRIVMSG" (y++" :"++udevsetup)
-    | "!cli" `isInfixOf` x = write "PRIVMSG" (y++" :"++clilink)
-    | "!commands" `isInfixOf` x = listcom y
-    | "!fastboot" `isInfixOf` x = write "PRIVMSG" (y++" :"++udevsetup)
-    | "!source" `isInfixOf` x = write "PRIVMSG" (y++" :"++source)
-    | "!udev" `isInfixOf` x = write "PRIVMSG" (y++" :"++udevsetup)
-
--- Respond to everyone...
-
--- resopond to the channel we received the message on (this doesn't work w/
--- private messages; yet, I have an idea just lazy)
-eval _ y _ x
-    | "!adb" `isInfixOf` x = write "PRIVMSG" (y++" :"++udevsetup)
-    | "!cli" `isInfixOf` x = write "PRIVMSG" (y++" :"++clilink)
-    | "!commands" `isInfixOf` x = listcom y
-    | "!fastboot" `isInfixOf` x = write "PRIVMSG" (y++" :"++udevsetup)
-    | "!source" `isInfixOf` x = write "PRIVMSG" (y++" :"++source)
-    | "!udev" `isInfixOf` x = write "PRIVMSG" (y++" :"++udevsetup)
-
-eval _ _ _ _ = return () -- ignore everything else
+    | "~msg " `isPrefixOf` c = write "PRIVMSG" (drop 5 c)
+    | "~part " `isPrefixOf` c = write "PART" (drop 6 c)
+    | "~topic " `isPrefixOf` c = write ("TOPIC "++chan) (" :"++drop 7 c)
+evaladcmd _ _ = return ()
+ 
+-- Evaluate common commands
+--
+-- SndNick -> Origin -> content (command)
+evalcmd :: String -> String -> String -> Net ()
+evalcmd u o c = do
+    if isPriv o
+        then evalprivcmd u c
+        else evalchancmd o c
+  where
+    isPriv x = "Hab" `isInfixOf` x
+ 
+-- Evaluate commands sent as private messages
+--
+-- SndNick -> content (command)
+evalprivcmd :: String -> String -> Net ()
+evalprivcmd u c
+    | "!adb" `isInfixOf` c = write "PRIVMSG" (u++" :"++udevsetup)
+    | "!cli" `isInfixOf` c = write "PRIVMSG" (u++" :"++clilink)
+    | "!commands" `isInfixOf` c = listcom u
+    | "!fastboot" `isInfixOf` c = write "PRIVMSG" (u++" :"++udevsetup)
+    | "!source" `isInfixOf` c = write "PRIVMSG" (u++" :"++source)
+    | "!udev" `isInfixOf` c = write "PRIVMSG" (u++" :"++udevsetup)
+evalprivcmd _ _ = return ()
+ 
+-- Evaluate in channel commands
+--
+-- Origin -> content (command)
+evalchancmd :: String -> String -> Net ()
+evalchancmd o c
+    | "!adb" `isInfixOf` c = write "PRIVMSG" (o++" :"++udevsetup)
+    | "!cli" `isInfixOf` c = write "PRIVMSG" (o++" :"++clilink)
+    | "!commands" `isInfixOf` c = listcom o
+    | "!fastboot" `isInfixOf` c = write "PRIVMSG" (o++" :"++udevsetup)
+    | "!source" `isInfixOf` c = write "PRIVMSG" (o++" :"++source)
+    | "!udev" `isInfixOf` c = write "PRIVMSG" (o++" :"++udevsetup)
+evalchancmd _ _ = return ()
 
 -- Evaluate a MODE change
 -- origin -> modetype (voice, etc) -> modwho (changes whos mode?)
