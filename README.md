@@ -9,6 +9,7 @@ To run Hab in your own IRC channel first make sure you have ghc and the Haskell 
 http://www.haskell.org/platform/
 
 After that is complete you clone this repo and reconfigure the connection variables found in Socket.hs
+
 The following variables need to be modified before running Hab
 
 	server (optional, if using freenode leave as is)
@@ -27,5 +28,7 @@ run Hab using the following:
 	runbot
 
 For a listing of general commands just talk to Hab either in channel or private message and include '!commands' in your message
+
 For a listing of admin commands (assuming you are an admin) private message Hab '~commands'
+
 In addition to the above commands there are also 3 non-listed commands at the top of eval (if you edited eval you'll already know this)
