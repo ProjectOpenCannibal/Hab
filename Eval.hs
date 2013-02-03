@@ -61,15 +61,14 @@ eval "FMKilo-d2usc" _ _ x
     | "!part " `isPrefixOf` x = write "PART" (drop 6 x)
 
 -- Respond to everyone...
-eval _ "#projectopencannibal" _ "!adb" = privmsg udevsetup
-eval _ "#kf2-dev" _ "!adb" = write "PRIVMSG" ("#kf2-dev :"++udevsetup)
-eval _ "#projectopencannibal" _ "!cli" = privmsg clilink
-eval _ "#kf2-dev" _ "!cli"= write "PRIVMSG" ("#kf2-dev :"++clilink)
-eval _ "#projectopencannibal" _ "!fastboot" = privmsg udevsetup
-eval _ "#kf2-dev" _ "!fastboot" = write "PRIVMSG" ("#kf2-dev :"++udevsetup)
-eval _ "#projectopencannibal" _ "!source" = privmsg source
-eval _ "#kf2-dev" _ "!source" = write "PRIVMSG" ("#kf2-dev :"++source)
-eval _ "#projectopencannibal" _ "!udev" = privmsg udevsetup
-eval _ "#kf2-dev" _ "!udev" = write "PRIVMSG" ("#kf2-dev :"++udevsetup)
+
+-- resopond to the channel we received the message on (this doesn't work w/
+-- private messages; yet, I have an idea just lazy)
+eval _ y _ x
+    | "!adb" `isInfixOf` x = write "PRIVMSG" (y++" :"++udevsetup)
+    | "!cli" `isInfixOf` x = write "PRIVMSG" (y++" :"++clilink)
+    | "!fastboot" `isInfixOf` x = write "PRIVMSG" (y++" :"++udevsetup)
+    | "!source" `isInfixOf` x = write "PRIVMSG" (y++" :"++source)
+    | "!udev" `isInfixOf` x = write "PRIVMSG" (y++" :"++udevsetup)
 
 eval _ _ _ _ = return () -- ignore everything else
