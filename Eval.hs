@@ -18,7 +18,7 @@ udevsetup = "http://forum.xda-developers.com/showthread.php?t=1475740"
 eval :: String -> String -> String -> String -> Net ()
 -- Non-argumental commands (keep in alpha)
 
--- Evaluate 'God' commands first (followed by private messages than other admin)
+-- Evaluate 'God' commands first (followed by other admin than private messages)
 -- I'm unable to make this apply to a list of users instead of the single option
 eval "IngCr3at1on" "Hab" _ "~deftopic" = write ("TOPIC "++chan) (" :"++deftopic)
 eval "IngCr3at1on" "Hab" _ "~opme" = write "MODE" (chan++" +o IngCr3at1on")
@@ -39,15 +39,6 @@ eval "IngCr3at1on" "Hab" _ x
     | "~op " `isPrefixOf` x = write ("MODE "++chan++" +o") (drop 4 x)
     | "~part " `isPrefixOf` x = write "PART" (drop 6 x)
     | "~topic " `isPrefixOf` x = write ("TOPIC "++chan) (" :"++drop 7 x)
-
--- Evaluate private messages (only neccessary if a response is required)
-eval y "Hab" _ x
-    | "!adb" `isInfixOf` x = write "PRIVMSG" (y++" :"++udevsetup)
-    | "!cli" `isInfixOf` x = write "PRIVMSG" (y++" :"++clilink)
-    | "!commands" `isInfixOf` x = listcom y
-    | "!fastboot" `isInfixOf` x = write "PRIVMSG" (y++" :"++udevsetup)
-    | "!source" `isInfixOf` x = write "PRIVMSG" (y++" :"++source)
-    | "!udev" `isInfixOf` x = write "PRIVMSG" (y++" :"++udevsetup)
 
 -- In lou of a proper list, overwrite eval per FMKilo's recommendation.
 eval "FMKilo" "Hab" _ x
@@ -71,6 +62,15 @@ eval "FMKilo-d2usc" "Hab" _ x
     -- channel or nick as #example : <message>
     | "~msg " `isPrefixOf` x = write "PRIVMSG" (drop 5 x)
     | "~part " `isPrefixOf` x = write "PART" (drop 6 x)
+
+-- Evaluate private messages (only neccessary if a response is required)
+eval y "Hab" _ x
+    | "!adb" `isInfixOf` x = write "PRIVMSG" (y++" :"++udevsetup)
+    | "!cli" `isInfixOf` x = write "PRIVMSG" (y++" :"++clilink)
+    | "!commands" `isInfixOf` x = listcom y
+    | "!fastboot" `isInfixOf` x = write "PRIVMSG" (y++" :"++udevsetup)
+    | "!source" `isInfixOf` x = write "PRIVMSG" (y++" :"++source)
+    | "!udev" `isInfixOf` x = write "PRIVMSG" (y++" :"++udevsetup)
 
 -- Respond to everyone...
 
