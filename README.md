@@ -8,7 +8,7 @@ This is a current work in progress, documentation may not be current.
 To run Hab in your own IRC channel first make sure you have ghc and the Haskell Platform installed on your PC.
 http://www.haskell.org/platform/
 
-After that is complete you clone this repo and reconfigure the connection variables found in Socket.hs
+After that is complete clone this repo and reconfigure the connection variables found in Socket.hs
 
 The following variables need to be modified before running Hab
 
