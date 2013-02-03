@@ -1,4 +1,4 @@
-module Eval (eval) where
+module Eval (eval, evalmode) where
 
 import Data.List
 import System.Exit
@@ -87,7 +87,7 @@ eval _ y _ x
 eval _ _ _ _ = return () -- ignore everything else
 
 -- Evaluate a MODE change
--- SndNick -> origin -> modetype (voice, etc) -> modwho (changes whos mode?)
---evalmode :: String -> String -> String -> String -> Net ()
--- I forgot why you wanted this FMKilo...
--- Finish it and export it, than uncomment the Modechange in listen.
+-- origin -> modetype (voice, etc) -> modwho (changes whos mode?)
+evalmode :: String -> String -> String -> Net ()
+evalmode "#projectopencannibal" "-o" "Hab" = write "PRIVMSG" ("chanserv :op #projectopencannibal Hab")
+evalmode _ _ _ = return ()
