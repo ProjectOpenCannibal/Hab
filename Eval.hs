@@ -20,54 +20,57 @@ eval :: String -> String -> String -> String -> Net ()
 
 -- Evaluate 'God' commands first (followed by private messages than other admin)
 -- I'm unable to make this apply to a list of users instead of the single option
-eval "IngCr3at1on" _ _ "!deftopic" = write ("TOPIC "++chan) (" :"++deftopic)
-eval "IngCr3at1on" _ _ "!opme" = write "MODE" (chan++" +o IngCr3at1on")
-eval "IngCr3at1on" _ _ "!quit" = write "QUIT" ":Reloading, hopefully..." >> io (exitWith ExitSuccess)
+eval "IngCr3at1on" "Hab" _ "~deftopic" = write ("TOPIC "++chan) (" :"++deftopic)
+eval "IngCr3at1on" "Hab" _ "~opme" = write "MODE" (chan++" +o IngCr3at1on")
+eval "IngCr3at1on" "Hab" _ "~quit" = write "QUIT" ":Reloading, hopefully..." >> io (exitWith ExitSuccess)
 
-eval "IngCr3at1on" _ _ x
+eval "IngCr3at1on" "Hab" _ x
     -- remember this is directed to the primary channel only; use msg for
     -- everything else.
-    | "!deop " `isPrefixOf` x = write ("MODE "++chan++" -o") (drop 6 x)
-    | "!id " `isPrefixOf` x = privmsg (drop 4 x)
-    | "!join " `isPrefixOf` x = write "JOIN" (drop 6 x)
-    | "!kick " `isPrefixOf` x = write "KICK" (drop 6 x)
-    | "!me " `isPrefixOf` x = privmsg ("\001ACTION "++(drop 4 x)++"\001")
+    | "~commands" `isInfixOf` x = listadcom "IngCr3at1on"
+    | "~deop " `isPrefixOf` x = write ("MODE "++chan++" -o") (drop 6 x)
+    | "~id " `isPrefixOf` x = privmsg (drop 4 x)
+    | "~join " `isPrefixOf` x = write "JOIN" (drop 6 x)
+    | "~kick " `isPrefixOf` x = write "KICK" (drop 6 x)
+    | "~me " `isPrefixOf` x = privmsg ("\001ACTION "++(drop 4 x)++"\001")
     -- a cheap implementation of message, only works if you manually do the
     -- channel or nick as #example :<message>
-    | "!msg " `isPrefixOf` x = write "PRIVMSG" (drop 5 x)
-    -- | "!msg" `isPrefixOf` x = write "PRIVMSG" ((getChan x)++":"++(getMsg x))
-    | "!op " `isPrefixOf` x = write ("MODE "++chan++" +o") (drop 4 x)
-    | "!part " `isPrefixOf` x = write "PART" (drop 6 x)
-    | "!topic " `isPrefixOf` x = write ("TOPIC "++chan) (" :"++drop 7 x)
+    | "~msg " `isPrefixOf` x = write "PRIVMSG" (drop 5 x)
+    | "~op " `isPrefixOf` x = write ("MODE "++chan++" +o") (drop 4 x)
+    | "~part " `isPrefixOf` x = write "PART" (drop 6 x)
+    | "~topic " `isPrefixOf` x = write ("TOPIC "++chan) (" :"++drop 7 x)
 
 -- Evaluate private messages (only neccessary if a response is required)
 eval y "Hab" _ x
     | "!adb" `isInfixOf` x = write "PRIVMSG" (y++" :"++udevsetup)
     | "!cli" `isInfixOf` x = write "PRIVMSG" (y++" :"++clilink)
+    | "!commands" `isInfixOf` x = listcom y
     | "!fastboot" `isInfixOf` x = write "PRIVMSG" (y++" :"++udevsetup)
     | "!source" `isInfixOf` x = write "PRIVMSG" (y++" :"++source)
     | "!udev" `isInfixOf` x = write "PRIVMSG" (y++" :"++udevsetup)
 
 -- In lou of a proper list, overwrite eval per FMKilo's recommendation.
-eval "FMKilo" _ _ x
-    | "!id " `isPrefixOf` x = privmsg (drop 4 x)
-    | "!join " `isPrefixOf` x = write "JOIN" (drop 6 x)
-    | "!kick " `isPrefixOf` x = write "KICK" (drop 6 x)
-    | "!me " `isPrefixOf` x = privmsg ("\001ACTION "++(drop 4 x)++"\001")
+eval "FMKilo" "Hab" _ x
+    | "~commands" `isInfixOf` x = listadcom "FMKilo"
+    | "~id " `isPrefixOf` x = privmsg (drop 4 x)
+    | "~join " `isPrefixOf` x = write "JOIN" (drop 6 x)
+    | "~kick " `isPrefixOf` x = write "KICK" (drop 6 x)
+    | "~me " `isPrefixOf` x = privmsg ("\001ACTION "++(drop 4 x)++"\001")
     -- a cheap implementation of message, only works if you manually do the
     -- channel or nick as #example : <message>
-    | "!msg " `isPrefixOf` x = write "PRIVMSG" (drop 5 x)
-    | "!part " `isPrefixOf` x = write "PART" (drop 6 x)
+    | "~msg " `isPrefixOf` x = write "PRIVMSG" (drop 5 x)
+    | "~part " `isPrefixOf` x = write "PART" (drop 6 x)
 
-eval "FMKilo-d2usc" _ _ x
-    | "!id " `isPrefixOf` x = privmsg (drop 4 x)
-    | "!join " `isPrefixOf` x = write "JOIN" (drop 6 x)
-    | "!kick " `isPrefixOf` x = write "KICK" (drop 6 x)
-    | "!me " `isPrefixOf` x = privmsg ("\001ACTION "++(drop 4 x)++"\001")
+eval "FMKilo-d2usc" "Hab" _ x
+    | "~commands" `isInfixOf` x = listadcom "FMKilo-d2usc"
+    | "~id " `isPrefixOf` x = privmsg (drop 4 x)
+    | "~join " `isPrefixOf` x = write "JOIN" (drop 6 x)
+    | "~kick " `isPrefixOf` x = write "KICK" (drop 6 x)
+    | "~me " `isPrefixOf` x = privmsg ("\001ACTION "++(drop 4 x)++"\001")
     -- a cheap implementation of message, only works if you manually do the
     -- channel or nick as #example : <message>
-    | "!msg " `isPrefixOf` x = write "PRIVMSG" (drop 5 x)
-    | "!part " `isPrefixOf` x = write "PART" (drop 6 x)
+    | "~msg " `isPrefixOf` x = write "PRIVMSG" (drop 5 x)
+    | "~part " `isPrefixOf` x = write "PART" (drop 6 x)
 
 -- Respond to everyone...
 
@@ -76,6 +79,7 @@ eval "FMKilo-d2usc" _ _ x
 eval _ y _ x
     | "!adb" `isInfixOf` x = write "PRIVMSG" (y++" :"++udevsetup)
     | "!cli" `isInfixOf` x = write "PRIVMSG" (y++" :"++clilink)
+    | "!commands" `isInfixOf` x = listcom y
     | "!fastboot" `isInfixOf` x = write "PRIVMSG" (y++" :"++udevsetup)
     | "!source" `isInfixOf` x = write "PRIVMSG" (y++" :"++source)
     | "!udev" `isInfixOf` x = write "PRIVMSG" (y++" :"++udevsetup)
