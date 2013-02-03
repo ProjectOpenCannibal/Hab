@@ -20,7 +20,7 @@ listen h = forever $ do
         else if modechange s
             then evalmode (origin s) (modetype s) (modwho s)
         else if kick s
-            then rejoin (origin s)
+            then write "JOIN" (origin s)
         else eval (sndnick s) (origin s) (msgtype s) (content s)
   where
     content = drop 1 . dropWhile (/= ':') . drop 1
