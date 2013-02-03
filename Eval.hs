@@ -1,4 +1,4 @@
-module Eval (eval, evalmode) where
+module Eval (eval, evalmode, mayberejoin) where
 
 import Data.List
 import System.Exit
@@ -127,3 +127,14 @@ evalchancmd _ _ = return ()
 evalmode :: String -> String -> String -> Net ()
 evalmode c "-o" "Hab" = write "PRIVMSG" ("chanserv :op "++c++" Hab")
 evalmode _ _ _ = return ()
+
+-- Check who was kicked and if it was the bot, rejoin the channel in question
+mayberejoin :: String -> Net ()
+mayberejoin s = do
+    if check s
+        then write "JOIN" (origin s)
+        else return ()
+  where
+    check x = "Hab" `isInfixOf` (whois s)
+    origin = (!! 2) . words
+    whois = (!! 3) . words
