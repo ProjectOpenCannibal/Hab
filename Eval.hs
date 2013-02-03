@@ -17,12 +17,13 @@ udevsetup = "http://forum.xda-developers.com/showthread.php?t=1475740"
 -- SndNick -> Origin -> Msgtype -> content (command)
 eval :: String -> String -> String -> String -> Net ()
 -- Non-argumental commands (keep in alpha)
+
+-- Evaluate 'God' commands first (followed by private messages than other admin)
 -- I'm unable to make this apply to a list of users instead of the single option
 eval "IngCr3at1on" _ _ "!deftopic" = write ("TOPIC "++chan) (" :"++deftopic)
 eval "IngCr3at1on" _ _ "!opme" = write "MODE" (chan++" +o IngCr3at1on")
 eval "IngCr3at1on" _ _ "!quit" = write "QUIT" ":Reloading, hopefully..." >> io (exitWith ExitSuccess)
 
--- Single arg commands (keep in alpha)
 eval "IngCr3at1on" _ _ x
     -- remember this is directed to the primary channel only; use msg for
     -- everything else.
@@ -38,6 +39,14 @@ eval "IngCr3at1on" _ _ x
     | "!op " `isPrefixOf` x = write ("MODE "++chan++" +o") (drop 4 x)
     | "!part " `isPrefixOf` x = write "PART" (drop 6 x)
     | "!topic " `isPrefixOf` x = write ("TOPIC "++chan) (" :"++drop 7 x)
+
+-- Evaluate private messages (only neccessary if a response is required)
+eval y "Hab" _ x
+    | "!adb" `isInfixOf` x = write "PRIVMSG" (y++" :"++udevsetup)
+    | "!cli" `isInfixOf` x = write "PRIVMSG" (y++" :"++clilink)
+    | "!fastboot" `isInfixOf` x = write "PRIVMSG" (y++" :"++udevsetup)
+    | "!source" `isInfixOf` x = write "PRIVMSG" (y++" :"++source)
+    | "!udev" `isInfixOf` x = write "PRIVMSG" (y++" :"++udevsetup)
 
 -- In lou of a proper list, overwrite eval per FMKilo's recommendation.
 eval "FMKilo" _ _ x
