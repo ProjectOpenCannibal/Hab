@@ -17,19 +17,12 @@ listen h = forever $ do
     io (putStrLn s)
     if ping s 
         then pong s
-        --else if modechange s
-            --then evalmode s
-        else eval (sndnick s) (sndfrom s) (content s)
+        else eval (sndnick s) (origin s) (msgtype s) (content s)
   where
-    forever a = a >> forever a
-    sndnick = drop 1 . takeWhile (/= '!')
-    -- I don't think this is parsing properly; if I set it to Hab it should only
-    -- respond to private message but instead it does not respond at all.
-    sndfrom = dropWhile (/= ' ') . dropWhile (/= ' ') . takeWhile (/= ' ')
     content = drop 1 . dropWhile (/= ':') . drop 1
+    forever a = a >> forever a
+    origin = (!! 2) . words
+    msgtype = (!! 1) . words
     ping x = "PING :" `isPrefixOf` x
     pong x = write "PONG" (':' : drop 6 x)
-    -- Untested method of passing a modechange (example for FMKilo) still needs
-    -- an evalmode function which I would recommend adding into Eval.hs and
-    -- exporting it along with eval.
-    --modechange x = dropWhile (/= '#') x
+    sndnick = drop 1 . takeWhile (/= '!')
