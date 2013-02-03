@@ -85,3 +85,9 @@ eval _ y _ x
     | "!udev" `isInfixOf` x = write "PRIVMSG" (y++" :"++udevsetup)
 
 eval _ _ _ _ = return () -- ignore everything else
+
+-- Evaluate a MODE change
+-- SndNick -> origin -> modetype (voice, etc) -> modwho (changes whos mode?)
+--evalmode :: String -> String -> String -> String -> Net ()
+-- I forgot why you wanted this FMKilo...
+-- Finish it and export it, than uncomment the Modechange in listen.

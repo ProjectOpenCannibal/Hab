@@ -17,12 +17,17 @@ listen h = forever $ do
     io (putStrLn s)
     if ping s 
         then pong s
+        --else if modechange s
+            --then evalmode (sndnick s) (origin s) (modetype s) (modwho s)
         else eval (sndnick s) (origin s) (msgtype s) (content s)
   where
     content = drop 1 . dropWhile (/= ':') . drop 1
     forever a = a >> forever a
     origin = (!! 2) . words
     msgtype = (!! 1) . words
+    modwho = (!! 4) . words
+    modechange x = "MODE" `isInfixOf` (msgtype x)
+    modetype = (!! 3) . words
     ping x = "PING :" `isPrefixOf` x
     pong x = write "PONG" (':' : drop 6 x)
     sndnick = drop 1 . takeWhile (/= '!')
