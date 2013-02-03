@@ -1,4 +1,4 @@
-module Eval (eval, evalmode) where
+module Eval (eval, evalmode, rejoin) where
 
 import Data.List
 import System.Exit
@@ -91,3 +91,6 @@ eval _ _ _ _ = return () -- ignore everything else
 evalmode :: String -> String -> String -> Net ()
 evalmode c "-o" "Hab" = write "PRIVMSG" ("chanserv :op "++c++" Hab")
 evalmode _ _ _ = return ()
+
+rejoin :: String -> Net ()
+rejoin x = write "JOIN" x
