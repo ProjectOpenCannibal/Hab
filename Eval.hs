@@ -89,5 +89,5 @@ eval _ _ _ _ = return () -- ignore everything else
 -- Evaluate a MODE change
 -- origin -> modetype (voice, etc) -> modwho (changes whos mode?)
 evalmode :: String -> String -> String -> Net ()
-evalmode "#projectopencannibal" "-o" "Hab" = write "PRIVMSG" ("chanserv :op #projectopencannibal Hab")
+evalmode c "-o" "Hab" = write "PRIVMSG" ("chanserv :op "++c++" Hab")
 evalmode _ _ _ = return ()
