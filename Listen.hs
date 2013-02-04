@@ -1,6 +1,7 @@
 module Listen (listen) where
 
 import Data.List
+import qualified Data.Text as T
 import Network
 import System.IO
 import System.Exit
@@ -25,10 +26,10 @@ listen h = forever $ do
   where
     content = drop 1 . dropWhile (/= ':') . drop 1
     forever a = a >> forever a
-    kick x = "KICK" `isInfixOf` (msgtype x)
+    kick x = "KICK" == (msgtype x)
     msgtype = (!! 1) . words
     modwho = (!! 4) . words
-    modechange x = "MODE" `isInfixOf` (msgtype x)
+    modechange x = "MODE" == (msgtype x)
     modetype = (!! 3) . words
     origin = (!! 2) . words
     ping x = "PING :" `isPrefixOf` x
