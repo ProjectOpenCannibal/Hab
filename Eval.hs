@@ -12,6 +12,7 @@ import Write
 -- should really go in a resource file rather than hard coded into the source
 clilink = "http://terokarvinen.com/command_line.html"
 udevsetup = "http://forum.xda-developers.com/showthread.php?t=1475740"
+kf2rts = "http://forum.xda-developers.com/showthread.php?t=2035047"
 
 -- Define admins and gods (gods have quit and op assignment controls)
 gods = ["IngCr3at1on"]
@@ -121,6 +122,7 @@ evalchancmd u o c
     | "!fastboot" `isInfixOf` c = write "PRIVMSG" (o++" :"++udevsetup)
     | "!source" `isInfixOf` c = write "PRIVMSG" (o++" :"++source)
     | "!udev" `isInfixOf` c = write "PRIVMSG" (o++" :"++udevsetup)
+evalchancmd _ "#kf2-dev" "!rts" = write "PRIVMSG" ("#kf2-dev :"++kf2rts)
 evalchancmd _ _ _ = return ()
 
 -- Evaluate a MODE change
