@@ -136,6 +136,6 @@ mayberejoin s = do
         then write "JOIN" (origin s)
         else return ()
   where
-    check x = "Hab" == (whois x)
+    check x = "Hab" == (whois s)
     origin = (!! 2) . words
     whois = (!! 3) . words
