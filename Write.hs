@@ -28,7 +28,7 @@ listcom s = do
     if kf1talk s
         then do
             write ("PRIVMSG "++s++" :") chanspeccmd
-            write ("PRIVMSG "++s++" :") ("!udev")
+            write ("PRIVMSG "++s++" :") ("!guide and !udev")
         else if kf2talk s
             then do
                 write ("PRIVMSG "++s++" :") chanspeccmd
