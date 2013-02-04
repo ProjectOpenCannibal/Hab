@@ -57,8 +57,8 @@ evalgodcmd u c
     | "~deftopic" `isPrefixOf` c = write ("TOPIC"++chan) (" :"++deftopic)
     | "~deop " `isPrefixOf` c = write ("MODE "++chan++" -o") (drop 6 c)
     | "~op " `isPrefixOf` c = write ("MODE "++chan++" +o") (drop 4 c)
-    | "~opme" `isPrefixOf` c = write "MODE" (chan++" +o "++u)
-    | "~quit" `isPrefixOf` c = write "QUIT" ":Reloading, hopefully..." >> io (exitWith ExitSuccess)
+    | "~opme" == c = write "MODE" (chan++" +o "++u)
+    | "~quit" == c = write "QUIT" ":Reloading, hopefully..." >> io (exitWith ExitSuccess)
 evalgodcmd _ _ = return ()
  
 -- Evaluate admin commands
@@ -105,10 +105,8 @@ evalcmd u o c = do
 -- SndNick -> content (command)
 evalprivcmd :: String -> String -> Net ()
 evalprivcmd u c
-    | "!adb" `isInfixOf` c = write "PRIVMSG" (u++" :"++udevsetup)
     | "!cli" `isInfixOf` c = write "PRIVMSG" (u++" :"++clilink)
     | "!commands" `isInfixOf` c = listcom u
-    | "!fastboot" `isInfixOf` c = write "PRIVMSG" (u++" :"++udevsetup)
     | "!source" `isInfixOf` c = write "PRIVMSG" (u++" :"++source)
     | "!udev" `isInfixOf` c = write "PRIVMSG" (u++" :"++udevsetup)
 evalprivcmd _ _ = return ()
@@ -118,10 +116,8 @@ evalprivcmd _ _ = return ()
 -- Sndnick (user) -> Origin -> content (command)
 evalchancmd :: String -> String -> String -> Net ()
 evalchancmd u o c
-    | "!adb" `isInfixOf` c = write "PRIVMSG" (o++" :"++udevsetup)
-    | "!cli" `isInfixOf` c = write "PRIVMSG" (o++" :"++clilink)
-    | "!commands" `isInfixOf` c = listcom o
-    | "!fastboot" `isInfixOf` c = write "PRIVMSG" (o++" :"++udevsetup)
+    | "!cli" == c = write "PRIVMSG" (o++" :"++clilink)
+    | "!commands" == c = listcom o
     | "!source" `isInfixOf` c = write "PRIVMSG" (o++" :"++source)
     | "!udev" `isInfixOf` c = write "PRIVMSG" (o++" :"++udevsetup)
 evalchancmd _ "#kf2-dev" c

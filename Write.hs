@@ -6,6 +6,9 @@ import Text.Printf
 --Local modules
 import Socket
 
+-- Common strings used throughout the file
+chanspeccmd = "The following commands are specific to this channel"
+
 -- Send a message to the server (only if it's initialized)
 write :: String -> String -> Net ()
 write s t = do
@@ -21,7 +24,19 @@ privmsg s = write "PRIVMSG" (chan ++ " :" ++ s)
 listcom :: String -> Net ()
 listcom s = do
     write ("PRIVMSG "++s++" :") ("Currently supported commands are as follows:")
-    write ("PRIVMSG "++s++" :") ("!adb, !commands, !cli, !fastboot, !source and !udev")
+    write ("PRIVMSG "++s++" :") ("!commands, !cli and !source")
+    if kf1talk s
+        then do
+            write ("PRIVMSG "++s++" :") chanspeccmd
+            write ("PRIVMSG "++s++" :") ("!udev")
+        else if kf2talk s
+            then do
+                write ("PRIVMSG "++s++" :") chanspeccmd
+                write ("PRIVMSG "++s++" :") ("!moorom, !oneclick, !rts and !udev")
+        else return ()
+  where
+    kf1talk x = x == "#kindlerfire-dev"
+    kf2talk x = x == "#kf2-dev"
 
 -- List admin commands
 listadcom :: String -> Net ()
