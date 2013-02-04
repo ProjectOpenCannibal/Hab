@@ -13,8 +13,8 @@ clilink = "http://terokarvinen.com/command_line.html"
 udevsetup = "http://forum.xda-developers.com/showthread.php?t=1475740"
 
 -- Define admins and gods (gods have quit and op assignment controls)
-gods = "IngCr3at1on"
-admins = "IngCr3at1on, FMKilo"
+gods = ["IngCr3at1on"]
+admins = ["IngCr3at1on", "FMKilo"]
 
 -- Evaluate a command
 --
@@ -28,8 +28,8 @@ eval u o _ c = do
             then evaladmin u o c
         else evalcmd u o c
   where
-    isAdmin x = x `isInfixOf` admins
-    isGod x = x `isInfixOf` gods
+    isAdmin x = x `elem` admins
+    isGod x = x `elem` gods
 
 -- Evaluate God commands (upon completion evaluate admin and standand commands)
 --
