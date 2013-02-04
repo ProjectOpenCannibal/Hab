@@ -19,7 +19,7 @@ udevsetup = "http://forum.xda-developers.com/showthread.php?t=1475740"
 
 -- Define admins and gods (gods have quit and op assignment controls)
 gods = ["IngCr3at1on"]
-admins = ["IngCr3at1on", "FMKilo", "Hashcode"]
+admins = ["IngCr3at1on", "FMKilo", "Hashcode", "iytrix"]
 
 -- Evaluate a command
 --
@@ -59,7 +59,7 @@ evalgodcmd u c
     | "~op " `isPrefixOf` c = write ("MODE "++chan++" +o") (drop 4 c)
     | "~opme" == c = write "MODE" (chan++" +o "++u)
     | "~quit" == c = write "QUIT" ":Reloading, hopefully..." >> io (exitWith ExitSuccess)
-evalgodcmd _ _ = return ()
+    | otherwise = return ()
  
 -- Evaluate admin commands
 --
@@ -88,7 +88,7 @@ evaladcmd u c
     | "~msg " `isPrefixOf` c = write "PRIVMSG" (drop 5 c)
     | "~part " `isPrefixOf` c = write "PART" (drop 6 c)
     | "~topic " `isPrefixOf` c = write ("TOPIC "++chan) (" :"++drop 7 c)
-evaladcmd _ _ = return ()
+    | otherwise = return ()
  
 -- Evaluate common commands
 --
@@ -109,7 +109,7 @@ evalprivcmd u c
     | "!cli" `isInfixOf` c = write "PRIVMSG" (u++" :"++clilink)
     | "!commands" `isInfixOf` c = listcom u
     | "!source" `isInfixOf` c = write "PRIVMSG" (u++" :"++source)
-evalprivcmd _ _ = return ()
+    | otherwise = return ()
  
 -- Evaluate in channel commands
 --
