@@ -1,6 +1,7 @@
 module Eval (eval, evalmode, mayberejoin) where
 
 import Data.List
+import qualified Data.Text as T
 import System.Exit
 
 -- Local modules
@@ -42,7 +43,7 @@ evalgod u o c = do
             evaladmin u o c
         else evalcmd u o c
   where
-    isPriv x = "Hab" `isInfixOf` x
+    isPriv x = "Hab" == x
 
 -- Finish god evaluation, I'm having issues figuring out how to write this
 -- into the above function
@@ -68,7 +69,7 @@ evaladmin u o c = do
             evalcmd u o c
         else evalcmd u o c
   where
-    isPriv x = "Hab" `isInfixOf` x
+    isPriv x = "Hab" == x
 
 -- Finish admin evaluation in the same way as gods
 evaladcmd :: String -> String -> Net ()
@@ -94,7 +95,7 @@ evalcmd u o c = do
         then evalprivcmd u c
         else evalchancmd u o c
   where
-    isPriv x = "Hab" `isInfixOf` x
+    isPriv x = "Hab" == x
  
 -- Evaluate commands sent as private messages
 --
@@ -135,6 +136,6 @@ mayberejoin s = do
         then write "JOIN" (origin s)
         else return ()
   where
-    check x = "Hab" `isInfixOf` (whois s)
+    check x = "Hab" == x
     origin = (!! 2) . words
     whois = (!! 3) . words
