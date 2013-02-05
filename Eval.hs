@@ -27,30 +27,25 @@ admins = ["IngCr3at1on", "FMKilo", "Hashcode", "iytrix"]
 -- (we drop type for now cause nothing uses it)
 eval :: String -> String -> String -> String -> Net ()
 eval u o _ c = do
-    if isGod u
-        then evalgod u o c
-        else if isAdmin u
-            then evaladmin u o c
-        else evalcmd u o c
+    if isPriv o
+        then do
+            if isGod u
+                then do
+                    evalgodcmd u c
+                    evaladcmd u c
+                    evalprivcmd u c
+                else if isAdmin u
+                    then do
+                    evaladcmd u c
+                    evalprivcmd u c
+                else evalprivcmd u c
+        else evalchancmd u o c
   where
     isAdmin x = x `elem` admins
     isGod x = x `elem` gods
-
--- Evaluate God commands (upon completion evaluate admin and standand commands)
---
--- SndNick -> Origin -> content (command)
-evalgod :: String -> String -> String -> Net ()
-evalgod u o c = do
-    if isPriv o
-        then do
-            evalgodcmd u c
-            evaladmin u o c
-        else evalcmd u o c
-  where
     isPriv x = "Hab" == x
 
--- Finish god evaluation, I'm having issues figuring out how to write this
--- into the above function
+-- Evaluate god commands
 --
 -- SndNick -> content (command)
 evalgodcmd :: String -> String -> Net ()
@@ -60,21 +55,8 @@ evalgodcmd u c
     | "~opme" == c = write "MODE" (chan++" +o "++u)
     | "~quit" == c = write "QUIT" ":Reloading, hopefully..." >> io (exitWith ExitSuccess)
     | otherwise = return ()
- 
--- Evaluate admin commands
---
--- SndNick -> Origin -> content (command)
-evaladmin :: String -> String -> String -> Net ()
-evaladmin u o c = do
-    if isPriv o
-        then do
-            evaladcmd u c
-            evalcmd u o c
-        else evalcmd u o c
-  where
-    isPriv x = "Hab" == x
 
--- Finish admin evaluation in the same way as gods
+-- process admin evaluation in the same way as gods
 evaladcmd :: String -> String -> Net ()
 evaladcmd u c
     | "~commands" `isInfixOf` c = listadcom u
@@ -89,17 +71,6 @@ evaladcmd u c
     | "~part " `isPrefixOf` c = write "PART" (drop 6 c)
     | "~topic " `isPrefixOf` c = write ("TOPIC "++chan) (" :"++drop 7 c)
     | otherwise = return ()
- 
--- Evaluate common commands
---
--- SndNick -> Origin -> content (command)
-evalcmd :: String -> String -> String -> Net ()
-evalcmd u o c = do
-    if isPriv o
-        then evalprivcmd u c
-        else evalchancmd u o c
-  where
-    isPriv x = "Hab" == x
  
 -- Evaluate commands sent as private messages
 --
