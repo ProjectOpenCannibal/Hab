@@ -141,7 +141,7 @@ evalchancmd _ o c = do
         else return ()
   where
     guide x = x == "!guide"
-    kf1talk x = x == "#kindlerfire-dev"
+    kf1talk x = x == "#kindlefire-dev"
     kf2talk x = x == "#kf2-dev"
     moo x = x == "!moorom"
     onclick x = x == "!oneclick"
