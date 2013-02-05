@@ -42,5 +42,5 @@ listcom s = do
 listadcom :: String -> Net ()
 listadcom s = do
     write ("PRIVMSG "++s++" :") ("Currently supported admin commands are as follows:")
-    write ("PRIVMSG "++s++" :") ("~commands, ~join, ~kick, ~me, ~msg and ~part")
+    write ("PRIVMSG "++s++" :") ("~commands, ~deop, ~join, ~kick, ~me, ~msg, ~op, ~opme and ~part")
     write ("PRIVMSG "++s++" :") ("Please note ~me may be relocated")

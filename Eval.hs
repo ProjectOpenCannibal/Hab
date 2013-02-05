@@ -50,9 +50,6 @@ eval u o _ c = do
 -- SndNick -> content (command)
 evalgodcmd :: String -> String -> Net ()
 evalgodcmd u c
-    | "~deop " `isPrefixOf` c = write ("MODE "++chan++" -o") (drop 6 c)
-    | "~op " `isPrefixOf` c = write ("MODE "++chan++" +o") (drop 4 c)
-    | "~opme" == c = write "MODE" (chan++" +o "++u)
     | "~quit" == c = write "QUIT" ":Reloading, hopefully..." >> io (exitWith ExitSuccess)
     | otherwise = return ()
 
@@ -61,6 +58,7 @@ evaladcmd :: String -> String -> Net ()
 evaladcmd u c
     | "~commands" `isInfixOf` c = listadcom u
     | "~deftopic" `isPrefixOf` c = write ("TOPIC"++chan) (" :"++deftopic)
+    | "~deop " `isPrefixOf` c = write ("MODE "++chan++" -o") (drop 6 c)
     | "~id " `isPrefixOf` c = privmsg (drop 4 c)
     | "~join " `isPrefixOf` c = write "JOIN" (drop 6 c)
     | "~kick " `isPrefixOf` c = write "KICK" (drop 6 c)
@@ -68,6 +66,8 @@ evaladcmd u c
     -- a cheap implementation of message, only works if you manually do the
     -- channel or nick as #example :<message>
     | "~msg " `isPrefixOf` c = write "PRIVMSG" (drop 5 c)
+    | "~op " `isPrefixOf` c = write ("MODE "++chan++" +o") (drop 4 c)
+    | "~opme" == c = write "MODE" (chan++" +o "++u)
     | "~part " `isPrefixOf` c = write "PART" (drop 6 c)
     | "~topic " `isPrefixOf` c = write ("TOPIC "++chan) (" :"++drop 7 c)
     | otherwise = return ()
