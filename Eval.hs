@@ -118,7 +118,6 @@ evalchancmd _ o c = do
     onclick x = x == "!oneclick"
     retstc x = x == "!rts"
     udev x = x == "!udev"
-evalchancmd _ _ _ = return ()
 
 -- Evaluate a MODE change
 -- origin -> modetype (voice, etc) -> modwho (changes whos mode?)
