@@ -35,7 +35,7 @@ listcom s = do
                 write ("PRIVMSG "++s++" :") ("!moorom, !oneclick, !rts and !udev")
         else return ()
   where
-    kf1talk x = x == "#kindlerfire-dev"
+    kf1talk x = x == "#kindlefire-dev"
     kf2talk x = x == "#kf2-dev"
 
 -- List admin commands
