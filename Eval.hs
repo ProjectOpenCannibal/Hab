@@ -13,6 +13,7 @@ import Write
 clilink = "http://terokarvinen.com/command_line.html"
 kf1guide = "http://forum.xda-developers.com/showthread.php?t=1552547"
 kf2rts = "http://forum.xda-developers.com/showthread.php?t=2035047"
+kf2rootlink = "http://forum.xda-developers.com/showthread.php?t=2075959"
 moorom = "http://forum.xda-developers.com/showthread.php?t=2105077"
 oneclick = "http://forum.xda-developers.com/showthread.php?t=2106463"
 udevsetup = "http://forum.xda-developers.com/showthread.php?t=1475740"
@@ -106,6 +107,8 @@ evalchancmd _ o c = do
                         then write "PRIVMSG" (o++" :"++oneclick)
                     else if retstc c
                         then write "PRIVMSG" (o++" :"++kf2rts)
+                    else if root c
+                        then write "PRIVMSG" (o++" :"++kf2rootlink)
                     else if udev c
                         then write "PRIVMSG" (o++" :"++udevsetup)
                     else return ()
@@ -117,6 +120,7 @@ evalchancmd _ o c = do
     moo x = x == "!moorom"
     onclick x = x == "!oneclick"
     retstc x = x == "!rts"
+    root x = x == "!root"
     udev x = x == "!udev"
 
 -- Evaluate a MODE change
