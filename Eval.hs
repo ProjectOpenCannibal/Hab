@@ -44,7 +44,7 @@ eval u o _ c = do
   where
     isAdmin x = x `elem` admins
     isGod x = x `elem` gods
-    isPriv x = "Hab" == x
+    isPriv x = nick == x
 
 -- Evaluate god commands
 --
@@ -126,7 +126,7 @@ evalchancmd _ o c = do
 -- Evaluate a MODE change
 -- origin -> modetype (voice, etc) -> modwho (changes whos mode?)
 evalmode :: String -> String -> String -> Net ()
-evalmode c "-o" "Hab" = write "PRIVMSG" ("chanserv :op "++c++" Hab")
+evalmode c "-o" nick = write "PRIVMSG" ("chanserv :op "++c++" "++nick)
 evalmode _ _ _ = return ()
 
 -- Check who was kicked and if it was the bot, rejoin the channel in question
@@ -136,6 +136,6 @@ mayberejoin s = do
         then write "JOIN" (origin s)
         else return ()
   where
-    check x = "Hab" == (whois s)
+    check x = nick == (whois s)
     origin = (!! 2) . words
     whois = (!! 3) . words
