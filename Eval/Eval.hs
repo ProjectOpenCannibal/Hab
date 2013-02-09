@@ -5,12 +5,9 @@ import qualified Data.Text as T
 
 -- Local modules
 import Eval.Commands
+import Eval.Users
 import Socket
 import Write
-
--- Define admins and gods (gods have quit and op assignment controls)
-gods = ["IngCr3at1on"]
-admins = ["IngCr3at1on", "FMKilo", "Hashcode", "iytrix"]
 
 -- Evaluate a command
 --
