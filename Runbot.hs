@@ -34,5 +34,4 @@ run = do
 identify :: Net ()
 identify = do
     password <- io (readFile ".password")
-    write "PRIVMSG" ("nickserv :identify "++password)
-    
+    write "PRIVMSG" ("nickserv :identify "++password)    

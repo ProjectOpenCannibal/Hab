@@ -1,4 +1,13 @@
-module Eval (eval, evalmode, mayberejoin) where
+module Eval.Commands (
+    -- Command listing
+    listadcom,
+    listcom,
+    -- Command evaluation
+    evaladcmd,
+    evalchancmd,
+    evalgodcmd,
+    evalprivcmd
+    ) where
 
 import Data.List
 import qualified Data.Text as T
@@ -8,45 +17,56 @@ import System.Exit
 import Socket
 import Write
 
--- Define any strings that we use on a regular basis (links etc)
--- should really go in a resource file rather than hard coded into the source
+---- Resources
+
+-- These will all be moved into a resource file
+--
+-- Common strings used throughout the file
+chanspeccmd = "The following commands are specific to this channel"
+
+-- common links (available in all channels)
 clilink = "http://terokarvinen.com/command_line.html"
+
+-- links available to the kindlefire-dev channel only
 kf1guide = "http://forum.xda-developers.com/showthread.php?t=1552547"
+
+-- links available to the kf2-dev channel only
 kf2rts = "http://forum.xda-developers.com/showthread.php?t=2035047"
 kf2rootlink = "http://forum.xda-developers.com/showthread.php?t=2075959"
 moorom = "http://forum.xda-developers.com/showthread.php?t=2105077"
 oneclick = "http://forum.xda-developers.com/showthread.php?t=2106463"
 udevsetup = "http://forum.xda-developers.com/showthread.php?t=1475740"
 
--- Define admins and gods (gods have quit and op assignment controls)
-gods = ["IngCr3at1on"]
-admins = ["IngCr3at1on", "FMKilo", "Hashcode", "iytrix"]
+---- Command listing
 
--- Evaluate a command
---
--- SndNick -> Origin -> Msgtype -> content (command)
--- (we drop type for now cause nothing uses it)
-eval :: String -> String -> String -> String -> Net ()
-eval u o _ c = do
-    if isPriv o
+-- List non-admin commands
+listcom :: String -> Net ()
+listcom s = do
+    write ("PRIVMSG "++s++" :") ("Currently supported commands are as follows:")
+    write ("PRIVMSG "++s++" :") ("!commands, !cli and !source")
+    if kf1talk s
         then do
-            if isGod u
-                then do
-                    evalgodcmd u c
-                    evaladcmd u c
-                    evalprivcmd u c
-                else if isAdmin u
-                    then do
-                    evaladcmd u c
-                    evalprivcmd u c
-                else evalprivcmd u c
-        else evalchancmd u o c
+            write ("PRIVMSG "++s++" :") chanspeccmd
+            write ("PRIVMSG "++s++" :") ("!guide and !udev")
+        else if kf2talk s
+            then do
+                write ("PRIVMSG "++s++" :") chanspeccmd
+                write ("PRIVMSG "++s++" :") ("!moorom, !oneclick, !rts and !udev")
+        else return ()
   where
-    isAdmin x = x `elem` admins
-    isGod x = x `elem` gods
-    isPriv x = nick == x
+    kf1talk x = x == "#kindlefire-dev"
+    kf2talk x = x == "#kf2-dev"
 
--- Evaluate god commands
+-- List admin commands
+listadcom :: String -> Net ()
+listadcom s = do
+    write ("PRIVMSG "++s++" :") ("Currently supported admin commands are as follows:")
+    write ("PRIVMSG "++s++" :") ("~commands, ~deop, ~join, ~kick, ~me, ~msg, ~op, ~opme and ~part")
+    write ("PRIVMSG "++s++" :") ("Please note ~me may be relocated")
+
+---- Command evaluation
+
+-- Process god commands
 --
 -- SndNick -> content (command)
 evalgodcmd :: String -> String -> Net ()
@@ -54,7 +74,7 @@ evalgodcmd u c
     | "~quit" == c = write "QUIT" ":Reloading, hopefully..." >> io (exitWith ExitSuccess)
     | otherwise = return ()
 
--- process admin evaluation in the same way as gods
+-- Process admin evaluation in the same way as gods
 evaladcmd :: String -> String -> Net ()
 evaladcmd u c
     | "~commands" `isInfixOf` c = listadcom u
@@ -114,28 +134,13 @@ evalchancmd _ o c = do
                     else return ()
         else return ()
   where
-    guide x = x == "!guide"
+    -- Channel calls (keep in alpha)
     kf1talk x = x == "#kindlefire-dev"
     kf2talk x = x == "#kf2-dev"
+    -- Command calls
+    guide x = x == "!guide"
     moo x = x == "!moorom"
     onclick x = x == "!oneclick"
     retstc x = x == "!rts"
     root x = x == "!root"
     udev x = x == "!udev"
-
--- Evaluate a MODE change
--- origin -> modetype (voice, etc) -> modwho (changes whos mode?)
-evalmode :: String -> String -> String -> Net ()
-evalmode c "-o" nick = write "PRIVMSG" ("chanserv :op "++c++" "++nick)
-evalmode _ _ _ = return ()
-
--- Check who was kicked and if it was the bot, rejoin the channel in question
-mayberejoin :: String -> Net ()
-mayberejoin s = do
-    if check s
-        then write "JOIN" (origin s)
-        else return ()
-  where
-    check x = nick == (whois s)
-    origin = (!! 2) . words
-    whois = (!! 3) . words

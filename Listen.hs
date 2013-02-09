@@ -7,7 +7,7 @@ import System.IO
 import System.Exit
 
 -- Local modules
-import Eval
+import Eval.Eval
 import Socket
 import Write
 
