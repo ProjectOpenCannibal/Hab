@@ -111,28 +111,28 @@ evalchancmd u o c
     | "!cli" == c = write "PRIVMSG" (o++" :"++clilink)
     | "!commands" == c = listcom o
     | "!source" `isInfixOf` c = write "PRIVMSG" (o++" :"++source)
-evalchancmd _ o c = do
-    if kf1talk o
-        then do
-            if guide c
-                then write "PRIVMSG" (o++" :"++kf1guide)
-                else if udev c
-                    then write "PRIVMSG" (o++" :"++udevsetup)
-                else return ()
-        else if kf2talk o
+    | otherwise = do
+        if kf1talk o
             then do
-                if moo c
-                    then write "PRIVMSG" (o++" :"++moorom)
-                    else if onclick c
-                        then write "PRIVMSG" (o++" :"++oneclick)
-                    else if retstc c
-                        then write "PRIVMSG" (o++" :"++kf2rts)
-                    else if root c
-                        then write "PRIVMSG" (o++" :"++kf2rootlink)
-                    else if udev c
-                        then write "PRIVMSG" (o++" :"++udevsetup)
-                    else return ()
-        else return ()
+                if guide c
+                    then write "PRIVMSG" (o++" :"++kf1guide)
+                        else if udev c
+                            then write "PRIVMSG" (o++" :"++udevsetup)
+                        else return ()
+            else if kf2talk o
+                then do
+                    if moo c
+                        then write "PRIVMSG" (o++" :"++moorom)
+                            else if onclick c
+                                then write "PRIVMSG" (o++" :"++oneclick)
+                            else if retstc c
+                                then write "PRIVMSG" (o++" :"++kf2rts)
+                            else if root c
+                                then write "PRIVMSG" (o++" :"++kf2rootlink)
+                            else if udev c
+                                 then write "PRIVMSG" (o++" :"++udevsetup)
+                            else return ()
+            else return ()
   where
     -- Channel calls (keep in alpha)
     kf1talk x = x == "#kindlefire-dev"
