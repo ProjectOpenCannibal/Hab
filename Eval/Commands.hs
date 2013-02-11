@@ -108,7 +108,7 @@ evalchancmd :: String -> String -> String -> Net ()
 evalchancmd u o c
     | "!cli" == c = write "PRIVMSG" (o++" :"++clilink)
     | "!commands" == c = listcom o
-    | "!source" `isInfixOf` c = write "PRIVMSG" (o++" :"++source)
+    | "!source" == c = write "PRIVMSG" (o++" :"++source)
     -- Evaluate channel specific commands
     | otherwise = do
         case c of
