@@ -36,3 +36,14 @@ listen h = forever $ do
     pong x = write "PONG" (':' : drop 6 x)
     sndnick = drop 1 . takeWhile (/= '!')
     sndreal = drop 1 . (!! 1) . words
+
+-- Check who was kicked and if it was the bot, rejoin the channel in question
+mayberejoin :: String -> Net ()
+mayberejoin s = do
+    if check s
+        then write "JOIN" (origin s)
+        else return ()
+  where
+    check x = nick == (whois s)
+    origin = (!! 2) . words
+    whois = (!! 3) . words

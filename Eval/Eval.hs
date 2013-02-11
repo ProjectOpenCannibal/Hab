@@ -1,4 +1,4 @@
-module Eval.Eval (eval, evalmode, mayberejoin) where
+module Eval.Eval (eval, evalmode) where
 
 import Data.List
 import qualified Data.Text as T
@@ -41,14 +41,3 @@ eval u r o _ c = let isPriv x = nick == x
 evalmode :: String -> String -> String -> Net ()
 evalmode c "-o" nick = write "PRIVMSG" ("chanserv :op "++c++" "++nick)
 evalmode _ _ _ = return ()
-
--- Check who was kicked and if it was the bot, rejoin the channel in question
-mayberejoin :: String -> Net ()
-mayberejoin s = do
-    if check s
-        then write "JOIN" (origin s)
-        else return ()
-  where
-    check x = nick == (whois s)
-    origin = (!! 2) . words
-    whois = (!! 3) . words

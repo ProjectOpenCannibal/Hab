@@ -80,18 +80,27 @@ evaladcmd :: String -> String -> String -> Net ()
 evaladcmd u r c
     | "~commands" == c = listadcom u
     | "~deftopic" == c = write ("TOPIC"++chan) (" :"++deftopic)
-    | "~deop " `isPrefixOf` c = write ("MODE "++chan++" -o") (drop 6 c)
+    -- | "~deop " `isPrefixOf` c = revop (drop 6 c)
+    -- | "~deop" == c = write "PRIVMSG" (u++" :Usage '~deop <nick> <channel>'")
     | "~id " `isPrefixOf` c = privmsg (drop 4 c)
     | "~join " `isPrefixOf` c = write "JOIN" (drop 6 c)
+    | "~join" == c = write "PRIVMSG" (u++" :Usage '~join <channel>'")
     | "~kick " `isPrefixOf` c = write "KICK" (drop 6 c)
-    | "~me " `isPrefixOf` c = privmsg ("\001ACTION "++(drop 4 c)++"\001")
+    | "~kick" == c = write "PRIVMSG" (u++" :Usage '~kick <channel> <nick> :<message>'")
+    -- | "~me " `isPrefixOf` c = action (drop 4 c)
+    -- | "~me" == c = write "PRIVMSG" (u++" :Usage '~me <channel> <action>'")
     -- a cheap implementation of message, only works if you manually do the
     -- channel or nick as #example :<message>
     | "~msg " `isPrefixOf` c = write "PRIVMSG" (drop 5 c)
-    | "~op " `isPrefixOf` c = write ("MODE "++chan++" +o") (drop 4 c)
+    -- | "~op " `isPrefixOf` c = setop (drop 4 c)
+    -- | "~op" == c = write "PRIVMSG" (u++" :Usage '~op <nick> <channel>'")
     | "~opme" == c = write "MODE" (chan++" +o "++u)
     | "~part " `isPrefixOf` c = write "PART" (drop 6 c)
+    | "~part" == c = write "PRIVMSG" (u++" :Usage '~part <channel>'")
     | "~topic " `isPrefixOf` c = write ("TOPIC "++chan) (" :"++drop 7 c)
+    | "~topic" == c = do
+        write "PRIVMSG" (u++" :Usage '~topic <topic>'")
+        write "PRIVMSG" (u++" :please note this applies to "++chan++" only")
     -- | "~verify" == c = write "PRIVMSG" (u++" : Usage is 'verify <password>'")
     -- | "~verify " `isPrefixOf` c = verifyNick u r c
     | otherwise = return ()
@@ -141,3 +150,35 @@ evalchancmd u o c
           -- Channel calls (keep in alpha)
           kf1talk x = x == "#kindlefire-dev"
           kf2talk x = x == "#kf2-dev"
+
+-- Add complex commands here
+
+-- These are  all broken; provides this error :
+-- Exception: Prelude.(!!): index too large
+--
+-- Assign op privs to a user in any channel we have op privs in
+--
+-- content (command)
+setop :: String -> Net ()
+setop c = let {
+    dest = (!! 2) . words
+    ; mode = (!! 1) . words
+    } in write ("MODE "++(dest c)++" +o") (mode c)
+
+-- Revoke op privs from a user
+--
+-- content (command)
+revop :: String -> Net ()
+revop c = let {
+    dest = (!! 2) . words
+    ; mode = (!! 1) . words
+    } in write ("MODE "++(dest c)++" -o") (mode c)
+
+-- Perform an action
+--
+-- content (command)
+action :: String -> Net ()
+action c = let {
+    dest = (!! 1) . words
+    ; func = (!! 2) . words
+    } in write ("PRIVMSG"++(dest c)++" :") ("\001ACTION "++(func c)++"\001")
