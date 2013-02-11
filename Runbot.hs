@@ -1,4 +1,7 @@
-module Runbot (runbot, run) where
+module Runbot (
+    run
+    , runbot
+    ) where
 
 import Control.Exception
 import Control.Monad.State

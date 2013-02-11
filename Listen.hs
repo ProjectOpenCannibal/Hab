@@ -18,22 +18,28 @@ listen h = forever $ do
     io (putStrLn s)
     if ping s 
         then pong s
+        -- In the event of a 'MODE' change evaluate it in Eval.Eval
         else if modechange s
             then evalmode (origin s) (modetype s) (modwho s)
+        -- In the evenf of a 'KICK' message on the socket, check if it's the bot
         else if kick s
             then mayberejoin s
+        -- Evaluate all other messages through Eval.Eval as if commands
         else eval (sndnick s) (sndreal s) (origin s) (msgtype s) (content s)
   where
-    content = drop 1 . dropWhile (/= ':') . drop 1
+    -- Always listening
     forever a = a >> forever a
+    -- Server messages
     kick x = "KICK" == (msgtype x)
-    msgtype = (!! 1) . words
-    modwho = (!! 4) . words
     modechange x = "MODE" == (msgtype x)
-    modetype = (!! 3) . words
-    origin = (!! 2) . words
     ping x = "PING :" `isPrefixOf` x
     pong x = write "PONG" (':' : drop 6 x)
+    -- Parse down our strings
+    content = drop 1 . dropWhile (/= ':') . drop 1
+    msgtype = (!! 1) . words
+    modwho = (!! 4) . words
+    modetype = (!! 3) . words
+    origin = (!! 2) . words
     sndnick = drop 1 . takeWhile (/= '!')
     sndreal = drop 1 . (!! 1) . words
 

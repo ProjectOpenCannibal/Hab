@@ -1,4 +1,7 @@
-module Eval.Eval (eval, evalmode) where
+module Eval.Eval (
+    eval
+    , evalmode
+    ) where
 
 import Data.List
 import qualified Data.Text as T
@@ -45,7 +48,7 @@ eval u r o t c
 -- Evaluate a MODE change
 -- origin -> modetype (voice, etc) -> modwho (changes whos mode?)
 evalmode :: String -> String -> String -> Net ()
-evalmode c "-o" nick = write "PRIVMSG" ("chanserv :op "++c++" "++nick)
+evalmode o "-o" nick = write "PRIVMSG" ("chanserv :op "++o++" "++nick)
 evalmode _ _ _ = return ()
 
 -- Regain access if the nick is locked

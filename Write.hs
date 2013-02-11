@@ -1,4 +1,7 @@
-module Write (write, privmsg) where
+module Write (
+    privmsg
+    , write
+    ) where
 
 import Control.Monad.State
 import Text.Printf
