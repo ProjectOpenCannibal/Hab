@@ -44,18 +44,16 @@ listcom :: String -> Net ()
 listcom s = do
     write ("PRIVMSG "++s++" :") ("Currently supported commands are as follows:")
     write ("PRIVMSG "++s++" :") ("!commands, !cli and !source")
-    if kf1talk s
-        then do
-            write ("PRIVMSG "++s++" :") chanspeccmd
-            write ("PRIVMSG "++s++" :") ("!guide and !udev")
-        else if kf2talk s
-            then do
-                write ("PRIVMSG "++s++" :") chanspeccmd
-                write ("PRIVMSG "++s++" :") ("!moorom, !oneclick, !rts and !udev")
-        else return ()
-  where
-    kf1talk x = x == "#kindlefire-dev"
-    kf2talk x = x == "#kf2-dev"
+    -- List any channel specific commands
+    case s of
+        -- (keep in alpha)
+        "#kindlefire-dev" -> do
+                                 write ("PRIVMSG "++s++" :") chanspeccmd
+                                 write ("PRIVMSG "++s++" :") ("!guide and !udev")
+        "#kf2-dev"        -> do
+                                 write ("PRIVMSG "++s++" :") chanspeccmd
+                                 write ("PRIVMSG "++s++" :") ("!moorom, !oneclick, !rts and !udev")
+        _                 -> return ()
 
 -- List admin commands
 listadcom :: String -> Net ()
@@ -77,8 +75,8 @@ evalgodcmd u c
 -- Process admin evaluation in the same way as gods
 evaladcmd :: String -> String -> Net ()
 evaladcmd u c
-    | "~commands" `isInfixOf` c = listadcom u
-    | "~deftopic" `isPrefixOf` c = write ("TOPIC"++chan) (" :"++deftopic)
+    | "~commands" == c = listadcom u
+    | "~deftopic" == c = write ("TOPIC"++chan) (" :"++deftopic)
     | "~deop " `isPrefixOf` c = write ("MODE "++chan++" -o") (drop 6 c)
     | "~id " `isPrefixOf` c = privmsg (drop 4 c)
     | "~join " `isPrefixOf` c = write "JOIN" (drop 6 c)
@@ -98,9 +96,9 @@ evaladcmd u c
 -- SndNick -> content (command)
 evalprivcmd :: String -> String -> Net ()
 evalprivcmd u c
-    | "!cli" `isInfixOf` c = write "PRIVMSG" (u++" :"++clilink)
-    | "!commands" `isInfixOf` c = listcom u
-    | "!source" `isInfixOf` c = write "PRIVMSG" (u++" :"++source)
+    | "!cli" == c = write "PRIVMSG" (u++" :"++clilink)
+    | "!commands" == c = listcom u
+    | "!source" == c = write "PRIVMSG" (u++" :"++source)
     | otherwise = return ()
  
 -- Evaluate in channel commands
@@ -111,8 +109,10 @@ evalchancmd u o c
     | "!cli" == c = write "PRIVMSG" (o++" :"++clilink)
     | "!commands" == c = listcom o
     | "!source" `isInfixOf` c = write "PRIVMSG" (o++" :"++source)
+    -- Evaluate channel specific commands
     | otherwise = do
         case c of
+            -- (keep in alpha)
             "!guide"    -> if kf1talk o
                                then write "PRIVMSG" (o++" :"++kf1guide)
                                else return ()
@@ -132,7 +132,7 @@ evalchancmd u o c
                                then write "PRIVMSG" (o++" :"++udevsetup)
                                else return ()
             _           -> return ()
-  where
-    -- Channel calls (keep in alpha)
-    kf1talk x = x == "#kindlefire-dev"
-    kf2talk x = x == "#kf2-dev"
+        where
+          -- Channel calls (keep in alpha)
+          kf1talk x = x == "#kindlefire-dev"
+          kf2talk x = x == "#kf2-dev"
