@@ -112,35 +112,27 @@ evalchancmd u o c
     | "!commands" == c = listcom o
     | "!source" `isInfixOf` c = write "PRIVMSG" (o++" :"++source)
     | otherwise = do
-        if kf1talk o
-            then do
-                if guide c
-                    then write "PRIVMSG" (o++" :"++kf1guide)
-                        else if udev c
-                            then write "PRIVMSG" (o++" :"++udevsetup)
-                        else return ()
-            else if kf2talk o
-                then do
-                    if moo c
-                        then write "PRIVMSG" (o++" :"++moorom)
-                            else if onclick c
-                                then write "PRIVMSG" (o++" :"++oneclick)
-                            else if retstc c
-                                then write "PRIVMSG" (o++" :"++kf2rts)
-                            else if root c
-                                then write "PRIVMSG" (o++" :"++kf2rootlink)
-                            else if udev c
-                                 then write "PRIVMSG" (o++" :"++udevsetup)
-                            else return ()
-            else return ()
+        case c of
+            "!guide"    -> if kf1talk o
+                               then write "PRIVMSG" (o++" :"++kf1guide)
+                               else return ()
+            "!moorom"   -> if kf2talk o
+                               then write "PRIVMSG" (o++" :"++moorom)
+                               else return ()
+            "!oneclick" -> if kf2talk o
+                               then write "PRIVMSG" (o++" :"++oneclick)
+                               else return ()
+            "!rts"      -> if kf2talk o
+                               then write "PRIVMSG" (o++" :"++kf2rts)
+                               else return ()
+            "!root"     -> if kf2talk o
+                               then write "PRIVMSG" (o++" :"++kf2rootlink)
+                               else return ()
+            "!udev"     -> if kf1talk o || kf2talk o
+                               then write "PRIVMSG" (o++" :"++udevsetup)
+                               else return ()
+            _           -> return ()
   where
     -- Channel calls (keep in alpha)
     kf1talk x = x == "#kindlefire-dev"
     kf2talk x = x == "#kf2-dev"
-    -- Command calls
-    guide x = x == "!guide"
-    moo x = x == "!moorom"
-    onclick x = x == "!oneclick"
-    retstc x = x == "!rts"
-    root x = x == "!root"
-    udev x = x == "!udev"
