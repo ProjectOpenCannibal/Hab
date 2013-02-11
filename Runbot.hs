@@ -3,11 +3,9 @@ module Runbot (
     , runbot
     ) where
 
-import Control.Exception
+import qualified Control.Exception as E
 import Control.Monad.State
 import System.IO
---Hide catch from w/in prelude as it's imported in Control.Exception
-import Prelude hiding (catch)
 
 --Local modules
 import Listen
@@ -15,10 +13,10 @@ import Socket
 import Write
 
 runbot :: IO ()
-runbot = bracket connect disconnect loop >> return ()
+runbot = E.bracket connect disconnect loop >> return ()
   where
     disconnect = hClose . socket
-    loop st = catch (runStateT run st) (\e -> const (return ((), st)) (e :: IOException))
+    loop st = E.catch (runStateT run st) (\e -> const (return ((), st)) (e :: E.IOException))
 
 -- Join our primary channel and initialize our listener
 run :: Net ()
