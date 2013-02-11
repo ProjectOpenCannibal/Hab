@@ -14,9 +14,12 @@ import Write
 -- SndNick -> Sndreal -> Origin -> Msgtype -> content (command)
 eval :: String -> String -> String -> String -> String -> Net ()
 eval u r o t c
+    -- Error codes such as someone else using the bot's NICK come in as type
+    -- and should be checked before anything else
     | "433" == t = regainnick
     | "437" == t = regainnick
-    | otherwise = let isPriv x = nick == x
+    -- Confirm the type instead of switching on all messages.
+    | "PRIVMSG" ==  t = let isPriv x = nick == x
         in if isPriv o
             then do
                 if isGod u
@@ -37,6 +40,7 @@ eval u r o t c
                             --evalprivcmd u c
                     else evalprivcmd u c
             else evalchancmd u o c
+    | otherwise = return ()
 
 -- Evaluate a MODE change
 -- origin -> modetype (voice, etc) -> modwho (changes whos mode?)

@@ -102,7 +102,7 @@ evaladcmd u r c
     | "~part" == c = write "PRIVMSG" (u++" :Usage: '~part <channel>'")
     | "~topic " `isPrefixOf` c = write ("TOPIC "++chan) (" :"++drop 7 c)
     | "~topic" == c = do
-        write "PRIVMSG" (u++" :Usage '~topic <topic>'")
+        write "PRIVMSG" (u++" :Usage: '~topic <topic>'")
         write "PRIVMSG" (u++" :please note this applies to "++chan++" only.")
     -- | "~verify" == c = write "PRIVMSG" (u++" : Usage is 'verify <password>'")
     -- | "~verify " `isPrefixOf` c = verifyNick u r c
