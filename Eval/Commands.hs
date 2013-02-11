@@ -83,10 +83,13 @@ evaladcmd u r c
     -- | "~deop " `isPrefixOf` c = revop (drop 6 c)
     -- | "~deop" == c = write "PRIVMSG" (u++" :Usage '~deop <nick> <channel>'")
     | "~id " `isPrefixOf` c = privmsg (drop 4 c)
+    | "~id" == c = do
+        write "PRIVMSG" (u++" :Usage: '~id <msg>'")
+        write "PRIVMSG" (u++" :directs message to primary channel.")
     | "~join " `isPrefixOf` c = write "JOIN" (drop 6 c)
-    | "~join" == c = write "PRIVMSG" (u++" :Usage '~join <channel>'")
+    | "~join" == c = write "PRIVMSG" (u++" :Usage: '~join <channel>'")
     | "~kick " `isPrefixOf` c = write "KICK" (drop 6 c)
-    | "~kick" == c = write "PRIVMSG" (u++" :Usage '~kick <channel> <nick> :<message>'")
+    | "~kick" == c = write "PRIVMSG" (u++" :Usage: '~kick <channel> <nick> :<message>'")
     -- | "~me " `isPrefixOf` c = action (drop 4 c)
     -- | "~me" == c = write "PRIVMSG" (u++" :Usage '~me <channel> <action>'")
     -- a cheap implementation of message, only works if you manually do the
@@ -96,11 +99,11 @@ evaladcmd u r c
     -- | "~op" == c = write "PRIVMSG" (u++" :Usage '~op <nick> <channel>'")
     | "~opme" == c = write "MODE" (chan++" +o "++u)
     | "~part " `isPrefixOf` c = write "PART" (drop 6 c)
-    | "~part" == c = write "PRIVMSG" (u++" :Usage '~part <channel>'")
+    | "~part" == c = write "PRIVMSG" (u++" :Usage: '~part <channel>'")
     | "~topic " `isPrefixOf` c = write ("TOPIC "++chan) (" :"++drop 7 c)
     | "~topic" == c = do
         write "PRIVMSG" (u++" :Usage '~topic <topic>'")
-        write "PRIVMSG" (u++" :please note this applies to "++chan++" only")
+        write "PRIVMSG" (u++" :please note this applies to "++chan++" only.")
     -- | "~verify" == c = write "PRIVMSG" (u++" : Usage is 'verify <password>'")
     -- | "~verify " `isPrefixOf` c = verifyNick u r c
     | otherwise = return ()
@@ -161,8 +164,8 @@ evalchancmd u o c
 -- content (command)
 setop :: String -> Net ()
 setop c = let {
-    dest = (!! 2) . words
-    ; mode = (!! 1) . words
+    dest = (!! 1) . words
+    ; mode = (!! 0) . words
     } in write ("MODE "++(dest c)++" +o") (mode c)
 
 -- Revoke op privs from a user
@@ -170,8 +173,8 @@ setop c = let {
 -- content (command)
 revop :: String -> Net ()
 revop c = let {
-    dest = (!! 2) . words
-    ; mode = (!! 1) . words
+    dest = (!! 1) . words
+    ; mode = (!! 0) . words
     } in write ("MODE "++(dest c)++" -o") (mode c)
 
 -- Perform an action
@@ -179,6 +182,6 @@ revop c = let {
 -- content (command)
 action :: String -> Net ()
 action c = let {
-    dest = (!! 1) . words
-    ; func = (!! 2) . words
+    dest = (!! 0) . words
+    ; func = (!! 1) . words
     } in write ("PRIVMSG"++(dest c)++" :") ("\001ACTION "++(func c)++"\001")

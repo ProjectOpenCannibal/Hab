@@ -18,8 +18,6 @@ listen h = forever $ do
     io (putStrLn s)
     if ping s 
         then pong s
-        else if nicklocked s
-            then regainnick
         else if modechange s
             then evalmode (origin s) (modetype s) (modwho s)
         else if kick s
@@ -33,7 +31,6 @@ listen h = forever $ do
     modwho = (!! 4) . words
     modechange x = "MODE" == (msgtype x)
     modetype = (!! 3) . words
-    nicklocked x = "Nickname is already in use." == (content x)
     origin = (!! 2) . words
     ping x = "PING :" `isPrefixOf` x
     pong x = write "PONG" (':' : drop 6 x)
@@ -50,12 +47,3 @@ mayberejoin s = do
     check x = nick == (whois s)
     origin = (!! 2) . words
     whois = (!! 3) . words
-
--- Regain access if the nick is locked
-regainnick :: Net ()
-regainnick = do
-    password <- io (readFile ".password")
-    write "NICK" "HaskellBot"
-    write "PRIVMSG nickserv :regain " (nick++" "++password)
-    write "PRIVMSG nickserv :regain " (nick++" "++password)
-    write "JOIN" chan
