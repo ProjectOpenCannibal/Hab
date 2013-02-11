@@ -26,11 +26,4 @@ run = do
     write "NICK" nick
     write "USER" (nick++" 0 * :"++realname)
     write "JOIN" chan
-    identify
     gets socket >>= listen
-
--- Auto identify on login (uses password stored in a local file '.password')
-identify :: Net ()
-identify = do
-    password <- io (readFile ".password")
-    write "PRIVMSG" ("nickserv :identify "++password)    

@@ -8,6 +8,7 @@ module Eval.Commands (
     , evalgodcmd
     , evalprivcmd
     -- Bot commands
+    , identify
     , regainnick
     ) where
 
@@ -45,39 +46,45 @@ oneclick = "http://forum.xda-developers.com/showthread.php?t=2106463"
 ---- Command listing
 
 -- List non-admin commands
+--
+-- sndnick
 listcom :: String -> Net ()
-listcom s = do
-    write ("PRIVMSG "++s++" :") ("Currently supported commands are as follows:")
-    write ("PRIVMSG "++s++" :") ("!commands, !cli and !source")
+listcom u = do
+    write ("PRIVMSG "++u++" :") ("Currently supported commands are as follows:")
+    write ("PRIVMSG "++u++" :") ("!commands, !cli and !source")
     -- List any channel specific commands
-    case s of
+    case u of
         -- (keep in alpha)
         "#kindlefire-dev" -> do
-                                 write ("PRIVMSG "++s++" :") chanspeccmd
-                                 write ("PRIVMSG "++s++" :") ("!guide and !udev")
+                                 write ("PRIVMSG "++u++" :") chanspeccmd
+                                 write ("PRIVMSG "++u++" :") ("!guide and !udev")
         "#kf2-dev"        -> do
-                                 write ("PRIVMSG "++s++" :") chanspeccmd
-                                 write ("PRIVMSG "++s++" :") ("!moorom, !oneclick, !rts and !udev")
+                                 write ("PRIVMSG "++u++" :") chanspeccmd
+                                 write ("PRIVMSG "++u++" :") ("!moorom, !oneclick, !rts and !udev")
         _                 -> return ()
 
 -- List admin commands
+--
+-- sndnick
 listadcom :: String -> Net ()
-listadcom s = do
-    write ("PRIVMSG "++s++" :") ("Currently supported admin commands are as follows:")
-    write ("PRIVMSG "++s++" :") ("~commands, ~deop, ~join, ~kick, ~me, ~msg, ~op, ~opme and ~part")
-    write ("PRIVMSG "++s++" :") ("Please note ~me may be relocated")
+listadcom u = do
+    write ("PRIVMSG "++u++" :") ("Currently supported admin commands are as follows:")
+    write ("PRIVMSG "++u++" :") ("~commands, ~deop, ~join, ~kick, ~me, ~msg, ~op, ~opme and ~part")
+    write ("PRIVMSG "++u++" :") ("Please note ~me may be relocated")
 
 ---- Command evaluation
 
 -- Process god commands
 --
--- SndNick -> SndReal -> content (command)
+-- sndnick -> sndreal -> content (command)
 evalgodcmd :: String -> String -> String -> Net ()
 evalgodcmd u r c
     | "~quit" == c = write "QUIT" ":Reloading, hopefully..." >> io (exitWith ExitSuccess)
     | otherwise = return ()
 
 -- Process admin evaluation in the same way as gods
+--
+-- sndnick -> sndreal -> content (command)
 evaladcmd :: String -> String -> String -> Net ()
 evaladcmd u r c
     | "~commands" == c = listadcom u
@@ -112,7 +119,7 @@ evaladcmd u r c
  
 -- Evaluate commands sent as private messages
 --
--- SndNick -> content (command)
+-- sndNick -> content (command)
 evalprivcmd :: String -> String -> Net ()
 evalprivcmd u c
     | "!cli" == c = write "PRIVMSG" (u++" :"++clilink)
@@ -122,7 +129,7 @@ evalprivcmd u c
  
 -- Evaluate in channel commands
 --
--- Sndnick (user) -> Origin -> content (command)
+-- sndnick (user) -> origin -> content (command)
 evalchancmd :: String -> String -> String -> Net ()
 evalchancmd u o c
     | "!cli" == c = write "PRIVMSG" (o++" :"++clilink)
@@ -156,9 +163,24 @@ evalchancmd u o c
           kf1talk x = x == "#kindlefire-dev"
           kf2talk x = x == "#kf2-dev"
 
--- Add complex commands here
+-- List bot commands here
 
--- These are  all broken; provides this error :
+-- Auto identify on login (uses password stored in a local file '.password')
+identify :: Net ()
+identify = do
+    password <- io (readFile ".password")
+    write "PRIVMSG" ("nickserv :identify "++password)
+
+-- Regain access if the nick is locked
+regainnick :: Net ()
+regainnick = do
+    password <- io (readFile ".password")
+    write "NICK" "HaskellBot"
+    write "PRIVMSG nickserv :regain " (nick++" "++password)
+    write "PRIVMSG nickserv :regain " (nick++" "++password)
+    write "JOIN" chan
+
+-- These are all broken; provides this error :
 -- Exception: Prelude.(!!): index too large
 --
 -- Assign op privs to a user in any channel we have op privs in
@@ -187,12 +209,3 @@ action c = let {
     dest = (!! 0) . words
     ; func = (!! 1) . words
     } in write ("PRIVMSG"++(dest c)++" :") ("\001ACTION "++(func c)++"\001")
-
--- Regain access if the nick is locked
-regainnick :: Net ()
-regainnick = do
-    password <- io (readFile ".password")
-    write "NICK" "HaskellBot"
-    write "PRIVMSG nickserv :regain " (nick++" "++password)
-    write "PRIVMSG nickserv :regain " (nick++" "++password)
-    write "JOIN" chan
