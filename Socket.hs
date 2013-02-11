@@ -3,7 +3,6 @@ module Socket (
     chan
     , deftopic
     , nick
-    , port
     , realname
     , server
     , source
