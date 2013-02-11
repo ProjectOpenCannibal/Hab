@@ -16,7 +16,6 @@ module Socket (
 
 import Control.Exception
 import Control.Monad.State
-import qualified Data.Map as M
 import Network
 import System.IO
 import Text.Printf

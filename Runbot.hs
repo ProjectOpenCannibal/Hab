@@ -5,9 +5,7 @@ module Runbot (
 
 import Control.Exception
 import Control.Monad.State
-import Network
 import System.IO
-import Text.Printf
 --Hide catch from w/in prelude as it's imported in Control.Exception
 import Prelude hiding (catch)
 

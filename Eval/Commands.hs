@@ -1,12 +1,14 @@
 module Eval.Commands (
     -- Command listing
-    listadcom,
-    listcom,
+    listadcom
+    , listcom
     -- Command evaluation
-    evaladcmd,
-    evalchancmd,
-    evalgodcmd,
-    evalprivcmd
+    , evaladcmd
+    , evalchancmd
+    , evalgodcmd
+    , evalprivcmd
+    -- Bot commands
+    , regainnick
     ) where
 
 import Data.List
@@ -185,3 +187,12 @@ action c = let {
     dest = (!! 0) . words
     ; func = (!! 1) . words
     } in write ("PRIVMSG"++(dest c)++" :") ("\001ACTION "++(func c)++"\001")
+
+-- Regain access if the nick is locked
+regainnick :: Net ()
+regainnick = do
+    password <- io (readFile ".password")
+    write "NICK" "HaskellBot"
+    write "PRIVMSG nickserv :regain " (nick++" "++password)
+    write "PRIVMSG nickserv :regain " (nick++" "++password)
+    write "JOIN" chan
