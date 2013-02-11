@@ -14,6 +14,7 @@ import qualified Data.Text as T
 import System.Exit
 
 -- Local modules
+import Eval.Users
 import Socket
 import Write
 
@@ -27,6 +28,9 @@ chanspeccmd = "The following commands are specific to this channel"
 -- common links (available in all channels)
 clilink = "http://terokarvinen.com/command_line.html"
 
+-- links common to all kindlefire devices
+udevsetup = "http://forum.xda-developers.com/showthread.php?t=1475740"
+
 -- links available to the kindlefire-dev channel only
 kf1guide = "http://forum.xda-developers.com/showthread.php?t=1552547"
 
@@ -35,7 +39,6 @@ kf2rts = "http://forum.xda-developers.com/showthread.php?t=2035047"
 kf2rootlink = "http://forum.xda-developers.com/showthread.php?t=2075959"
 moorom = "http://forum.xda-developers.com/showthread.php?t=2105077"
 oneclick = "http://forum.xda-developers.com/showthread.php?t=2106463"
-udevsetup = "http://forum.xda-developers.com/showthread.php?t=1475740"
 
 ---- Command listing
 

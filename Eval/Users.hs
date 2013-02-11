@@ -1,4 +1,11 @@
-module Eval.Users (gods, admins) where
+module Eval.Users (
+    -- Lists
+    admins
+    , gods
+    -- Verification commands
+    , isAdmin
+    , isGod
+    ) where
 
 import Data.List
 --import qualified Data.Map as M
@@ -13,6 +20,14 @@ import qualified Data.Text as T
 gods = ["IngCr3at1on"]
 admins = ["IngCr3at1on", "FMKilo", "Hashcode", "iytrix"]
 
+-- Check if the user is a god
+isGod :: String -> Bool
+isGod u = u `elem` gods
+
+-- Check if the user is an admin
+isAdmin :: String -> Bool
+isAdmin u = u `elem` admins
+
 -- Track a map of admin nicknames vs realnames
 -- Use this for verifying both admins and gods
 -- SndNick -> SndReal
@@ -23,8 +38,10 @@ admins = ["IngCr3at1on", "FMKilo", "Hashcode", "iytrix"]
 -- SndNick -> SndReal -> Password
 --verifyNick :: String -> String -> String -> Net ()
 --verifyNick u r p = do
-    --if u == "IngCr3at1on"
+    --if isGod u
         --then do
+            -- Use habs password for testing but change this to allow for
+            -- different admins to use different passwords.
             --password <- io (readFile ".password")
             --if check p
                 --then do

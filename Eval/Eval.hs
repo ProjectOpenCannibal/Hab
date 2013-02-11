@@ -14,8 +14,8 @@ import Write
 -- SndNick -> Sndreal -> Origin -> Msgtype -> content (command)
 -- (we drop type for now cause nothing uses it)
 eval :: String -> String -> String -> String -> String -> Net ()
-eval u r o _ c = do
-    if isPriv o
+eval u r o _ c = let isPriv x = nick == x
+    in if isPriv o
         then do
             if isGod u
             --if isGod u && isAdminConfirmed u r
@@ -35,10 +35,6 @@ eval u r o _ c = do
                         --evalprivcmd u c
                 else evalprivcmd u c
         else evalchancmd u o c
-  where
-    isAdmin x = x `elem` admins
-    isGod x = x `elem` gods
-    isPriv x = nick == x
 
 -- Evaluate a MODE change
 -- origin -> modetype (voice, etc) -> modwho (changes whos mode?)
