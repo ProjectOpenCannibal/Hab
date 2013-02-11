@@ -12,9 +12,13 @@ module Eval.Commands (
     , regainnick
     ) where
 
+--import Data.Either.Utils
 import Data.List
 import qualified Data.Text as T
 import System.Exit
+
+-- Hackage modules
+--import Data.ConfigFile
 
 -- Local modules
 import Eval.Users
@@ -79,7 +83,7 @@ listadcom u = do
 -- sndnick -> sndreal -> content (command)
 evalgodcmd :: String -> String -> String -> Net ()
 evalgodcmd u r c
-    | "~quit" == c = write "QUIT" ":Reloading, hopefully..." >> io (exitWith ExitSuccess)
+    | "~quit" == c = processquit
     | otherwise = return ()
 
 -- Process admin evaluation in the same way as gods
@@ -170,6 +174,18 @@ identify :: Net ()
 identify = do
     password <- io (readFile ".password")
     write "PRIVMSG" ("nickserv :identify "++password)
+
+-- Perform any neccessary actions before logging off/quitting
+processquit :: Net ()
+processquit = do
+    --commands <- io (readfile emptyCP "res/commands.cfg")
+    --forceEither $ let cmd = commands
+        --in do
+            --cmd <- add_section cmd "add"
+            --cmd <- set cmd "add" "a" "test"
+            --cmd <- set cmd "add" "foo" "bar"
+            --options cmd "test"
+    write "QUIT" ":Reloading, hopefully..." >> io (exitWith ExitSuccess)
 
 -- Regain access if the nick is locked
 regainnick :: Net ()
