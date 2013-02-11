@@ -1,7 +1,8 @@
 module Socket (server, port, chan, nick, realname, deftopic, source, Bot(socket), Net, connect, io) where
 
 import Control.Exception
-import Control.Monad.Reader
+import Control.Monad.State
+import qualified Data.Map as M
 import Network
 import System.IO
 import Text.Printf
@@ -17,8 +18,8 @@ deftopic = "Project Open Cannibal and Cannibal Open Touch Recovery | http://www.
 source = "https://github.com/ProjectOpenCannibal/Hab/commits/"
 
 -- Thread our socket actions through a Net monad
+type Net = StateT Bot IO
 data Bot = Bot { socket :: Handle }
-type Net = ReaderT Bot IO
 
 -- Connect to the server and initialize the bot
 connect :: IO Bot
@@ -27,10 +28,9 @@ connect = notify $ do
     hSetBuffering h NoBuffering
     return (Bot h)
   where
-    notify a = bracket_
+    notify = bracket_
         (printf "Connecting to %s ... " server >> hFlush stdout)
         (putStrLn "done.")
-        a
 
 -- Add an IO reference to pass data to our net monad (utilized in write)
 io :: IO a -> Net a

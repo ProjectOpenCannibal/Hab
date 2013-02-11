@@ -22,7 +22,7 @@ listen h = forever $ do
             then evalmode (origin s) (modetype s) (modwho s)
         else if kick s
             then mayberejoin s
-        else eval (sndnick s) (origin s) (msgtype s) (content s)
+        else eval (sndnick s) (sndreal s) (origin s) (msgtype s) (content s)
   where
     content = drop 1 . dropWhile (/= ':') . drop 1
     forever a = a >> forever a
@@ -35,3 +35,4 @@ listen h = forever $ do
     ping x = "PING :" `isPrefixOf` x
     pong x = write "PONG" (':' : drop 6 x)
     sndnick = drop 1 . takeWhile (/= '!')
+    sndreal = drop 1 . (!! 1) . words

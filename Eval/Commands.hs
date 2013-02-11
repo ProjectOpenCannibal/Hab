@@ -66,15 +66,15 @@ listadcom s = do
 
 -- Process god commands
 --
--- SndNick -> content (command)
-evalgodcmd :: String -> String -> Net ()
-evalgodcmd u c
+-- SndNick -> SndReal -> content (command)
+evalgodcmd :: String -> String -> String -> Net ()
+evalgodcmd u r c
     | "~quit" == c = write "QUIT" ":Reloading, hopefully..." >> io (exitWith ExitSuccess)
     | otherwise = return ()
 
 -- Process admin evaluation in the same way as gods
-evaladcmd :: String -> String -> Net ()
-evaladcmd u c
+evaladcmd :: String -> String -> String -> Net ()
+evaladcmd u r c
     | "~commands" == c = listadcom u
     | "~deftopic" == c = write ("TOPIC"++chan) (" :"++deftopic)
     | "~deop " `isPrefixOf` c = write ("MODE "++chan++" -o") (drop 6 c)
@@ -89,6 +89,8 @@ evaladcmd u c
     | "~opme" == c = write "MODE" (chan++" +o "++u)
     | "~part " `isPrefixOf` c = write "PART" (drop 6 c)
     | "~topic " `isPrefixOf` c = write ("TOPIC "++chan) (" :"++drop 7 c)
+    -- | "~verify" == c = write "PRIVMSG" (u++" : Usage is 'verify <password>'")
+    -- | "~verify " `isPrefixOf` c = verifyNick u r c
     | otherwise = return ()
  
 -- Evaluate commands sent as private messages
