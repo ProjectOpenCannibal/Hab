@@ -13,13 +13,14 @@ module Eval.Commands (
     ) where
 
 --import Data.Either.Utils
+import Control.Monad.Error
 import Data.List
 import qualified Data.Text as T
---import System.IO.Unsafe
+import System.IO.Unsafe
 import System.Exit
 
 -- Hackage modules
---import Data.ConfigFile
+import Data.ConfigFile
 
 -- Local modules
 import Eval.Users
@@ -172,9 +173,9 @@ evalchancmd u o c
 
 -- get our commands
 --getcommand :: String -> String
---getcommand s = do
-    --cmd <- unsafePerformIO (readfile emptyCP "res/commands.cfg")
-    --r <- get cmd "DEFAULT" s
+--getcommand c = do
+    --cp <- unsafePerformIO $ readfile emptyCP "res/commands.cfg"
+    --r <- get cp "DEFAULT" c
     --return r
 
 -- Auto identify on login (uses password stored in a local file '.password')
