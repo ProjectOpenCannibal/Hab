@@ -15,6 +15,7 @@ module Eval.Commands (
 --import Data.Either.Utils
 import Data.List
 import qualified Data.Text as T
+--import System.IO.Unsafe
 import System.Exit
 
 -- Hackage modules
@@ -169,6 +170,13 @@ evalchancmd u o c
 
 -- List bot commands here
 
+-- get our commands
+--getcommand :: String -> String
+--getcommand s = do
+    --cmd <- unsafePerformIO (readfile emptyCP "res/commands.cfg")
+    --r <- get cmd "DEFAULT" s
+    --return r
+
 -- Auto identify on login (uses password stored in a local file '.password')
 identify :: Net ()
 identify = do
@@ -178,13 +186,6 @@ identify = do
 -- Perform any neccessary actions before logging off/quitting
 processquit :: Net ()
 processquit = do
-    --commands <- io (readfile emptyCP "res/commands.cfg")
-    --forceEither $ let cmd = commands
-        --in do
-            --cmd <- add_section cmd "add"
-            --cmd <- set cmd "add" "a" "test"
-            --cmd <- set cmd "add" "foo" "bar"
-            --options cmd "test"
     write "QUIT" ":Reloading, hopefully..." >> io (exitWith ExitSuccess)
 
 -- Regain access if the nick is locked
