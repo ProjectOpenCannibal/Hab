@@ -8,9 +8,9 @@ import Control.Monad.State
 import System.IO
 
 -- Local modules
-import Net.Socket
-import Net.Listen
-import Write
+import Lib.Net.Listen
+import Lib.Net.Socket
+import Lib.Write
 
 runbot :: IO ()
 runbot = E.bracket connect disconnect loop >> return ()

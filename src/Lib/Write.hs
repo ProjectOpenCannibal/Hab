@@ -1,4 +1,4 @@
-module Write (
+module Lib.Write (
     privmsg
     , write
     ) where
@@ -7,7 +7,7 @@ import Control.Monad.State
 import Text.Printf
 
 --Local modules
-import Net.Socket
+import Lib.Net.Socket
 
 -- Send a message to the server (only if it's initialized)
 write :: String -> String -> Net ()

@@ -1,4 +1,6 @@
-module Net.Listen (listen) where
+module Lib.Net.Listen (
+    listen
+    ) where
 
 import Data.List
 import qualified Data.Text as T
@@ -7,9 +9,9 @@ import System.IO
 import System.Exit
 
 -- Local modules
-import Eval.Eval
-import Net.Socket
-import Write
+import Lib.Eval.Eval
+import Lib.Net.Socket
+import Lib.Write
 
 -- Listen to the socket and respond
 listen :: Handle -> Net ()
@@ -25,7 +27,7 @@ listen h = forever $ do
         else if kick s
             then mayberejoin s
         -- Evaluate all other messages through Eval.Eval as if commands
-        else eval (sndnick s) (sndreal s) (origin s) (msgtype s) (content s)
+        else eval (user s) (usrreal s) (origin s) (msgtype s) (content s)
   where
     -- Always listening
     forever a = a >> forever a
@@ -40,8 +42,8 @@ listen h = forever $ do
     modwho = (!! 4) . words
     modetype = (!! 3) . words
     origin = (!! 2) . words
-    sndnick = drop 1 . takeWhile (/= '!')
-    sndreal = drop 1 . (!! 1) . words
+    user = drop 1 . takeWhile (/= '!')
+    usrreal = drop 1 . (!! 1) . words
 
 -- Check who was kicked and if it was the bot, rejoin the channel in question
 mayberejoin :: String -> Net ()

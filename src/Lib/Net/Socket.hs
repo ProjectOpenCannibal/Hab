@@ -1,4 +1,4 @@
-module Net.Socket (
+module Lib.Net.Socket (
     -- Resource / connection variables
     chan
     , deftopic
