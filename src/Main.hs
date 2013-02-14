@@ -1,14 +1,11 @@
-module Main (
-    run
-    , runbot
-    ) where
+module Main () where
 
 import qualified Control.Exception as E
 import Control.Monad.State
 import System.IO
 
 -- Local modules
-import Lib.IRC.HabIRC
+import Lib.IRC.Net.HabIRCNet
 
 runbot :: IO ()
 runbot = E.bracket connect disconnect loop >> return ()
