@@ -1,4 +1,4 @@
-module Lib.Eval.Eval (
+module Lib.IRC.Eval.Eval (
     eval
     , evalmode
     ) where
@@ -7,10 +7,10 @@ import Data.List
 import qualified Data.Text as T
 
 -- Local modules
-import Lib.Eval.Commands
-import Lib.Eval.Users
-import Lib.Net.Socket
-import Lib.Write
+import Lib.IRC.Eval.Commands
+import Lib.IRC.Eval.Users
+import Lib.IRC.Net.Socket
+import Lib.IRC.Net.Write
 
 -- Evaluate a command
 --

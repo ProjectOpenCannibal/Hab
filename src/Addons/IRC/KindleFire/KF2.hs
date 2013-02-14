@@ -4,8 +4,8 @@ module Addons.IRC.KindleFire.KF2 (
     , kf2
     ) where
 
-import Lib.Net.Socket
-import Lib.Write
+import Lib.IRC.Net.Socket
+import Lib.IRC.Net.Write
 
 kf2 = "#kf2-dev"
 

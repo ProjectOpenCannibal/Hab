@@ -4,7 +4,7 @@ module Addons.IRC.Common (
     ) where
 
 import Addons.IRC.KindleFire.Common
-import Lib.Net.Socket
+import Lib.IRC.Net.Socket
 
 listAddons :: String -> Net ()
 listAddons user = do

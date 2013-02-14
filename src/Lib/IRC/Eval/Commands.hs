@@ -1,4 +1,4 @@
-module Lib.Eval.Commands (
+module Lib.IRC.Eval.Commands (
     -- Command listing
     listadcom
     , listcom
@@ -24,9 +24,8 @@ import Data.ConfigFile
 
 -- Local modules
 import Addons.IRC.Common
-import Lib.Eval.Users
-import Lib.Net.Socket
-import Lib.Write
+import Lib.IRC.Net.Socket
+import Lib.IRC.Net.Write
 
 ---- Resources
 

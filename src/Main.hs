@@ -8,9 +8,7 @@ import Control.Monad.State
 import System.IO
 
 -- Local modules
-import Lib.Net.Listen
-import Lib.Net.Socket
-import Lib.Write
+import Lib.IRC.HabIRC
 
 runbot :: IO ()
 runbot = E.bracket connect disconnect loop >> return ()

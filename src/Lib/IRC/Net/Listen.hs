@@ -1,4 +1,4 @@
-module Lib.Net.Listen (
+module Lib.IRC.Net.Listen (
     listen
     ) where
 
@@ -9,9 +9,9 @@ import System.IO
 import System.Exit
 
 -- Local modules
-import Lib.Eval.Eval
-import Lib.Net.Socket
-import Lib.Write
+import Lib.IRC.Eval.Eval
+import Lib.IRC.Net.Socket
+import Lib.IRC.Net.Write
 
 -- Listen to the socket and respond
 listen :: Handle -> Net ()

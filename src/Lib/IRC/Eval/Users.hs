@@ -1,4 +1,4 @@
-module Lib.Eval.Users (
+module Lib.IRC.Eval.Users (
     -- Lists
     admins
     , gods
@@ -13,8 +13,8 @@ import qualified Data.Text as T
 --import System.IO
 
 --Local modules
---import Lib.Net.Socket
---import Lib.Write
+--import Lib.IRC.Net.Socket
+--import Lib.IRC.Net.Write
 
 -- Define admins and gods (gods have quit and op assignment controls)
 gods = ["IngCr3at1on"]

@@ -5,8 +5,8 @@ module Addons.IRC.KindleFire.Common (
 
 import Addons.IRC.KindleFire.KF1
 import Addons.IRC.KindleFire.KF2
-import Lib.Net.Socket
-import Lib.Write
+import Lib.IRC.Net.Socket
+import Lib.IRC.Net.Write
 
 chanspeccmd = "The following commands are specific to this channel"
 
