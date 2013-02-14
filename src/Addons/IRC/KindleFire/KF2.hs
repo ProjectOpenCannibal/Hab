@@ -23,10 +23,10 @@ evalKF2Addons :: String -> String -> String -> Net ()
 evalKF2Addons user origin content = 
     case content of
         -- (keep in alpha)
-        "!moorom"   -> write "PRIVMSG" (origin++" :"++moorom)
-        "!oneclick" -> write "PRIVMSG" (origin++" :"++oneclick)
-        "!rts"      -> write "PRIVMSG" (origin++" :"++kf2rts)
-        "!root"     -> write "PRIVMSG" (origin++" :"++kf2rootlink)
-        "!udev"     -> write "PRIVMSG" (origin++" :"++udevsetup)
+        "!moorom"   -> privmsg origin moorom
+        "!oneclick" -> privmsg origin oneclick
+        "!rts"      -> privmsg origin kf2rts
+        "!root"     -> privmsg origin kf2rootlink
+        "!udev"     -> privmsg origin udevsetup
         _           -> return ()
 

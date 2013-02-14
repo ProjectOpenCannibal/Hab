@@ -17,5 +17,5 @@ write s t = do
     io $ printf    "> %s %s\n" s t
 
 -- Wrap write up as a private message
-privmsg :: String -> Net ()  	
-privmsg s = write "PRIVMSG" (chan ++ " :" ++ s)
+privmsg :: String -> String -> Net ()
+privmsg dest content = write "PRIVMSG" (dest++" :"++content)

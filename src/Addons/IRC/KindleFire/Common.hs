@@ -14,11 +14,11 @@ listKindleAddons :: String -> Net ()
 listKindleAddons user = do
     if user == kf1
         then do
-            write ("PRIVMSG "++user++" :") chanspeccmd
+            privmsg user chanspeccmd
             listKF1Cmds user
         else if user == kf2
             then do
-                write ("PRIVMSG "++user++" :") chanspeccmd
+                privmsg user chanspeccmd
                 listKF2Cmds user
         else return ()
 

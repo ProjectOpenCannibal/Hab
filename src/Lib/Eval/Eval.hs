@@ -47,8 +47,8 @@ eval user usrreal origin msgtype content
                             evalprivcmd user content
                     --else if isGod user || isAdmin user
                         --then do
-                            --write "PRIVMSG" (user++" :"++"Your nick is recognized as an admin but you are not verified...")
-                            --write "PRIVMSG" (user++" :"++"Please verify your nick to use admin commands.")
+                            --privmsg user "Your nick is recognized as an admin but you are not verified..."
+                            --privmsg user "Please verify your nick to use admin commands."
                             --evalprivcmd user content
                     else evalprivcmd user content
             else evalchancmd user origin content
@@ -58,7 +58,7 @@ eval user usrreal origin msgtype content
 --
 -- origin -> modetype (voice, etc) -> modwho (changes whos mode?)
 evalmode :: String -> String -> String -> Net ()
-evalmode origin "-o" nick = write "PRIVMSG" ("chanserv :op "++origin++" "++nick)
+evalmode origin "-o" nick = privmsg "chanserv" ("op "++origin++" "++nick)
 evalmode _ _ _ = return ()
 
 -- Check if a given message came in as a PRIVMSG instead of via a channel
