@@ -7,7 +7,7 @@ import Control.Monad.State
 import Text.Printf
 
 --Local modules
-import Socket
+import Net.Socket
 
 -- Send a message to the server (only if it's initialized)
 write :: String -> String -> Net ()

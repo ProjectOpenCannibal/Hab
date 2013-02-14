@@ -1,4 +1,4 @@
-module Runbot (
+module Main (
     run
     , runbot
     ) where
@@ -7,9 +7,9 @@ import qualified Control.Exception as E
 import Control.Monad.State
 import System.IO
 
---Local modules
-import Listen
-import Socket
+-- Local modules
+import Net.Socket
+import Net.Listen
 import Write
 
 runbot :: IO ()

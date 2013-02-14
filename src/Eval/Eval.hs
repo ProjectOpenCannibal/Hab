@@ -9,7 +9,7 @@ import qualified Data.Text as T
 -- Local modules
 import Eval.Commands
 import Eval.Users
-import Socket
+import Net.Socket
 import Write
 
 -- Evaluate a command

@@ -1,4 +1,4 @@
-module Socket (
+module Net.Socket (
     -- Resource / connection variables
     chan
     , deftopic

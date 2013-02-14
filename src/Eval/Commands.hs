@@ -24,7 +24,7 @@ import Data.ConfigFile
 
 -- Local modules
 import Eval.Users
-import Socket
+import Net.Socket
 import Write
 
 ---- Resources
@@ -178,10 +178,12 @@ evalchancmd u o c
     --r <- get cp "DEFAULT" c
     --return r
 
--- Auto identify on login (uses password stored in a local file '.password')
+-- Auto identify on login (uses password stored in a local file '../.password')
 identify :: Net ()
 identify = do
-    password <- io (readFile ".password")
+    -- Password file should be stored in same location as Readme and .gitignore
+    -- (one folder above src)
+    password <- io (readFile "../.password")
     write "PRIVMSG" ("nickserv :identify "++password)
 
 -- Perform any neccessary actions before logging off/quitting

@@ -13,7 +13,7 @@ import qualified Data.Text as T
 --import System.IO
 
 --Local modules
---import Socket
+--import Net.Socket
 --import Write
 
 -- Define admins and gods (gods have quit and op assignment controls)

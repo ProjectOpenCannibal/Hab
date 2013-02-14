@@ -1,4 +1,4 @@
-module Listen (listen) where
+module Net.Listen (listen) where
 
 import Data.List
 import qualified Data.Text as T
@@ -8,7 +8,7 @@ import System.Exit
 
 -- Local modules
 import Eval.Eval
-import Socket
+import Net.Socket
 import Write
 
 -- Listen to the socket and respond
