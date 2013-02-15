@@ -3,7 +3,7 @@ module Addons.IRC.Common (
     , evalAddons
     ) where
 
-import Addons.IRC.KindleFire.Common
+import Addons.IRC.KindleFire.KFCommon
 import Lib.IRC.Net.Socket
 
 listAddons :: String -> Net ()

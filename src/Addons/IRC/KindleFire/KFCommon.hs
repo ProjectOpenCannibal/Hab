@@ -1,4 +1,4 @@
-module Addons.IRC.KindleFire.Common (
+module Addons.IRC.KindleFire.KFCommon (
     listKindleAddons
     , evalKindleAddons
     ) where

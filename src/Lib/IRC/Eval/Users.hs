@@ -1,9 +1,6 @@
 module Lib.IRC.Eval.Users (
-    -- Lists
-    admins
-    , gods
     -- Verification commands
-    , isAdmin
+    isAdmin
     , isGod
     ) where
 

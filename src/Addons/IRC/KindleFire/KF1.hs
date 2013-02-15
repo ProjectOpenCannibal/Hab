@@ -16,7 +16,7 @@ listKF1Cmds :: String -> Net ()
 listKF1Cmds user = privmsg user "!guide and !udev"
 
 evalKF1Addons :: String -> String -> String -> Net ()
-evalKF1Addons user origin content = do
+evalKF1Addons user origin content =
     case content of
         -- (keep in alpha)
         "!guide" -> privmsg origin kf1guide

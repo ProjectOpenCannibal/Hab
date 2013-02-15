@@ -13,8 +13,6 @@ import Lib.IRC.Net.Socket
 import Lib.IRC.Net.Write
 
 -- Evaluate a command
---
--- sndnick -> sndreal ->origin -> msgtype -> content (command)
 eval :: String -> String -> String -> String -> String -> Net ()
 eval user usrreal origin msgtype content
     -- Error codes such as someone else using the bot's NICK come in as type

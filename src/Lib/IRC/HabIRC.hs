@@ -16,6 +16,7 @@ module Lib.IRC.HabIRC (
     , io
     ---- export net write
     , privmsg
-    , write) where
+    , write
+    ) where
 
 import Lib.IRC.Net.HabIRCNet

@@ -17,7 +17,7 @@ module Lib.IRC.Net.HabIRCNet (
     ---- export write
     , privmsg
     , write
-) where
+    ) where
 
 import Lib.IRC.Net.Listen
 import Lib.IRC.Net.Socket
