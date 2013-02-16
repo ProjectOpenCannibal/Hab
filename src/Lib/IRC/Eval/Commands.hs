@@ -57,14 +57,14 @@ listadcom user = do
 usage :: String -> String -> Net ()
 usage user content =
     case content of
-        "~deop"   -> privmsg user ":Usage '~deop <nick> <channel>'"
+        "~deop"   -> privmsg user "Usage: '~deop <nick> <channel>'"
         "~id"     -> do
                          privmsg user "Usage: '~id <msg>'"
-                         privmsg user "directs message to primary channel."
+                         privmsg user ("directs message to "++chan++"only."
         "~join"   -> privmsg user "Usage: '~join <channel>'"
         "~kick"   -> privmsg user "Usage: '~kick <channel> <nick> :<message>'"
-        "~me"     -> privmsg user "Usage '~me <channel> <action>'"
-        "~op"     -> privmsg user "Usage '~op <nick> <channel>'"
+        "~me"     -> privmsg user "Usage: '~me <channel> <action>'"
+        "~op"     -> privmsg user "Usage: '~op <nick> <channel>'"
         "~part"   -> privmsg user "Usage: '~part <channel>'"
         "~topic"  -> do
                          privmsg user "Usage: '~topic <topic>'"
