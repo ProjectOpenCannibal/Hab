@@ -5,6 +5,7 @@ import Control.Monad.State
 import System.IO
 
 -- Local modules
+import Lib.IRC.Eval.HabCommands
 import Lib.IRC.Net.HabIRCNet
 
 runbot :: IO ()
@@ -18,5 +19,5 @@ run :: Net ()
 run = do
     write "NICK" nick
     write "USER" (nick++" 0 * :"++realname)
-    write "JOIN" chan
+    joinchan chan
     gets socket >>= listen

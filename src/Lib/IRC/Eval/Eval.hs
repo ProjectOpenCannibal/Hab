@@ -1,6 +1,9 @@
 module Lib.IRC.Eval.Eval (
     eval
     , evalmode
+    -- Exported from HabCommands through Commands
+    , joinchan
+    , mayberejoin
     ) where
 
 import Data.List
