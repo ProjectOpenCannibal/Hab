@@ -1,6 +1,9 @@
 module Addons.IRC.KindleFire.KFCommon (
     listKindleAddons
     , evalKindleAddons
+    -- export our channel references
+    , kf1
+    , kf2
     ) where
 
 import Addons.IRC.KindleFire.KF1

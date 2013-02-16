@@ -9,7 +9,6 @@ import Lib.IRC.Net.Write
 
 kf2 = "#kf2-dev"
 
--- links available to the kf2-dev channel only
 kf2rts = "http://forum.xda-developers.com/showthread.php?t=2035047"
 kf2rootlink = "http://forum.xda-developers.com/showthread.php?t=2075959"
 moorom = "http://forum.xda-developers.com/showthread.php?t=2105077"

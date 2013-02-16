@@ -31,8 +31,6 @@ import Lib.IRC.Net.Write
 
 ---- Resources
 
--- These will all be moved into a resource file
---
 -- common links (available in all channels)
 clilink = "http://terokarvinen.com/command_line.html"
 
@@ -51,7 +49,7 @@ listadcom :: String -> Net ()
 listadcom user = do
     privmsg user "Currently supported admin commands are as follows:"
     privmsg user "~commands, ~deop, ~join, ~kick, ~me, ~msg, ~op, ~opme and ~part"
-    privmsg user "Please note ~me may be relocated"
+    listAddonsAdmin user
 
 ---- Command evaluation
 

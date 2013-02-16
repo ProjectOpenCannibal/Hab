@@ -5,6 +5,7 @@ import Control.Monad.State
 import System.IO
 
 -- Local modules
+import Addons.IRC.Common
 import Lib.IRC.Eval.HabCommands
 import Lib.IRC.Net.HabIRCNet
 
@@ -20,4 +21,5 @@ run = do
     write "NICK" nick
     write "USER" (nick++" 0 * :"++realname)
     joinchan chan
+    joinAddonChans
     gets socket >>= listen

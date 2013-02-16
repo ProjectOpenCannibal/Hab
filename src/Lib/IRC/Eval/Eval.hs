@@ -25,7 +25,7 @@ eval user usrreal origin msgtype content
     -- Check 'NOTICE' messages prior to 'PRIVMSG'
     | "NOTICE" == msgtype
         -- Use this for identify instead of calling it automatically
-        -- (current identify tries to identify itself before NickServ notices
+        -- (old identify tried to identify itself before NickServ notices
         -- in the of a NICK regain)
         = let isIdRequest x = "This nickname is registered. " `isPrefixOf` x
             in if isPriv origin && isIdRequest content

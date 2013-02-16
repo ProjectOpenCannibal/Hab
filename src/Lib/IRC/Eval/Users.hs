@@ -13,7 +13,7 @@ import qualified Data.Text as T
 --import Lib.IRC.Net.Socket
 --import Lib.IRC.Net.Write
 
--- Define admins and gods (gods have quit and op assignment controls)
+-- Define admins and gods (god provides quit)
 gods = ["IngCr3at1on"]
 -- No need to repeat entries as admin commands are evaluated by gods regardless
 admins = ["FMKilo",
