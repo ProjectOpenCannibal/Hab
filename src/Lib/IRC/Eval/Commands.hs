@@ -60,7 +60,7 @@ usage user content =
         "~deop"   -> privmsg user "Usage: '~deop <nick> <channel>'"
         "~id"     -> do
                          privmsg user "Usage: '~id <msg>'"
-                         privmsg user ("directs message to "++chan++"only."
+                         privmsg user ("directs message to "++chan++"only.")
         "~join"   -> privmsg user "Usage: '~join <channel>'"
         "~kick"   -> privmsg user "Usage: '~kick <channel> <nick> :<message>'"
         "~me"     -> privmsg user "Usage: '~me <channel> <action>'"
