@@ -15,7 +15,10 @@ import qualified Data.Text as T
 
 -- Define admins and gods (gods have quit and op assignment controls)
 gods = ["IngCr3at1on"]
-admins = ["IngCr3at1on", "FMKilo", "Hashcode", "iytrix"]
+-- No need to repeat entries as admin commands are evaluated by gods regardless
+admins = ["FMKilo",
+          "Hashcode",
+          "iytrix"]
 
 -- Check if the user is a god
 isGod :: String -> Bool

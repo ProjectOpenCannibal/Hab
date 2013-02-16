@@ -28,5 +28,5 @@ evalKF2Addons user origin content =
         "!rts"      -> privmsg origin kf2rts
         "!root"     -> privmsg origin kf2rootlink
         "!udev"     -> privmsg origin udevsetup
-        _           -> return ()
+        otherwise   -> return ()
 

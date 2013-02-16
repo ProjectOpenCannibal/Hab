@@ -19,6 +19,6 @@ evalKF1Addons :: String -> String -> String -> Net ()
 evalKF1Addons user origin content =
     case content of
         -- (keep in alpha)
-        "!guide" -> privmsg origin kf1guide
-        "!udev"  -> privmsg origin udevsetup
-        _        -> return ()
+        "!guide"  -> privmsg origin kf1guide
+        "!udev"   -> privmsg origin udevsetup
+        otherwise -> return ()

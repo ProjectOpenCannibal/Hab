@@ -13,14 +13,14 @@ module Lib.IRC.Eval.Commands (
     ) where
 
 --import Data.Either.Utils
-import Control.Monad.Error
+--import Control.Monad.Error
 import Data.List
 import qualified Data.Text as T
 import System.IO.Unsafe
 import System.Exit
 
 -- Hackage modules
-import Data.ConfigFile
+--import Data.ConfigFile
 
 -- Local modules
 import Addons.IRC.Common
@@ -53,6 +53,24 @@ listadcom user = do
 
 ---- Command evaluation
 
+-- List all of our usage commands for easy reference
+usage :: String -> String -> Net ()
+usage user content =
+    case content of
+        "~deop"   -> privmsg user ":Usage '~deop <nick> <channel>'"
+        "~id"     -> do
+                         privmsg user "Usage: '~id <msg>'"
+                         privmsg user "directs message to primary channel."
+        "~join"   -> privmsg user "Usage: '~join <channel>'"
+        "~kick"   -> privmsg user "Usage: '~kick <channel> <nick> :<message>'"
+        "~me"     -> privmsg user "Usage '~me <channel> <action>'"
+        "~op"     -> privmsg user "Usage '~op <nick> <channel>'"
+        "~part"   -> privmsg user "Usage: '~part <channel>'"
+        "~topic"  -> do
+                         privmsg user "Usage: '~topic <topic>'"
+                         privmsg user ("please note this applies to "++chan++" only.")
+        otherwise -> return ()
+
 -- Process god commands
 evalgodcmd :: String -> String -> String -> Net ()
 evalgodcmd user usrreal content
@@ -60,35 +78,29 @@ evalgodcmd user usrreal content
     | otherwise = return ()
 
 -- Process admin evaluation in the same way as gods
---
--- sndnick -> sndreal -> content (command)
 evaladcmd :: String -> String -> String -> Net ()
 evaladcmd user usrreal content
     | "~commands" == content = listadcom user
-    -- | "~deop " `isPrefixOf` content = revop (drop 6 content)
-    -- | "~deop" == content = privmsg user ":Usage '~deop <nick> <channel>'"
+    | "~deop " `isPrefixOf` content = revop user (drop 6 content)
+    | "~deop" == content = usage user content
     | "~id " `isPrefixOf` content = privmsg chan (drop 4 content)
-    | "~id" == content = do
-        privmsg user "Usage: '~id <msg>'"
-        privmsg user "directs message to primary channel."
+    | "~id" == content = usage user content
     | "~join " `isPrefixOf` content = write "JOIN" (drop 6 content)
-    | "~join" == content = privmsg user "Usage: '~join <channel>'"
+    | "~join" == content = usage user content
     | "~kick " `isPrefixOf` content = write "KICK" (drop 6 content)
-    | "~kick" == content = privmsg user "Usage: '~kick <channel> <nick> :<message>'"
-    -- | "~me " `isPrefixOf` content = action (drop 4 content)
-    -- | "~me" == content = privmsg user "Usage '~me <channel> <action>'"
+    | "~kick" == content = usage user content
+    | "~me " `isPrefixOf` content = action user (drop 4 content)
+    | "~me" == content = usage user content
     -- a cheap implementation of message, only works if you manually do the
     -- channel or nick as #example :<message>
     | "~msg " `isPrefixOf` content = write "PRIVMSG" (drop 5 content)
-    -- | "~op " `isPrefixOf` content = setop (drop 4 content)
-    -- | "~op" == content = privmsg user "Usage '~op <nick> <channel>'"
+    | "~op " `isPrefixOf` content = setop user (drop 4 content)
+    | "~op" == content = usage user content
     | "~opme" == content = write "MODE" (chan++" +o "++user)
     | "~part " `isPrefixOf` content = write "PART" (drop 6 content)
-    | "~part" == content = privmsg user "Usage: '~part <channel>'"
+    | "~part" == content = usage user content
     | "~topic " `isPrefixOf` content = write ("TOPIC "++chan) (" :"++drop 7 content)
-    | "~topic" == content = do
-        privmsg user "Usage: '~topic <topic>'"
-        privmsg user ("please note this applies to "++chan++" only.")
+    | "~topic" == content = usage user content
     -- | "~verify" == content = privmsg user "Usage is 'verify <password>'"
     -- | "~verify " `isPrefixOf` content = verifyNick user usrreal content
     | otherwise = return ()
@@ -112,6 +124,18 @@ evalchancmd user origin content
 
 ---- List bot commands here
 
+-- Perform an action
+-- (code feels redundant, I don't like breakwords in let...)
+-- ToDo: write a function to grab dest and func regardless of order passed
+action :: String -> String -> Net ()
+action user content = let {
+    breakwords = words
+    ; dest = (!! 0) . words
+    ; func = tail -- need a way to drop the first word from the tail
+    } in if length (breakwords content) < 2
+          then usage user "~action"
+          else privmsg (dest content) ("\001ACTION "++(func content)++"\001")
+
 -- Auto identify on login (uses password stored in local file '../.password')
 identify :: Net ()
 identify = do
@@ -134,27 +158,26 @@ regainnick = do
     privmsg "nickserv" ("regain "++nick++" "++password)
     write "JOIN" chan
 
--- These are all broken; provides this error :
--- Exception: Prelude.(!!): index too large
--- They also will not send the appropriate content (they need to be replaced)
---
--- Perform an action
-action :: String -> Net ()
-action content = let {
-    dest = (!! 0) . words
-    ; func = (!! 1) . words
-    } in write ("PRIVMSG"++(dest content)++" :") ("\001ACTION "++(func content)++"\001")
+-- Revoke op privs from a user
+-- (code feels redundant, I don't like breakwords in let...)
+-- ToDo: write a function to grab dest and func regardless of order passed
+revop :: String -> String -> Net ()
+revop user content = let {
+    breakwords = words
+    ; dest = (!! 1) . words
+    ; mode = (!! 0) . words
+    } in if length (breakwords content) < 2
+          then usage user "~deop"
+          else write ("MODE "++(dest content)++" -o") (mode content)
 
 -- Assign op privs to a user in any channel we have op privs in
-setop :: String -> Net ()
-setop content = let {
-    dest = (!! 1) . words
+-- (code feels redundant, I don't like breakwords in let...)
+-- ToDo: write a function to grab dest and func regardless of order passed
+setop :: String -> String -> Net ()
+setop user content = let {
+    breakwords = words
+    ; dest = (!! 1) . words
     ; mode = (!! 0) . words
-    } in write ("MODE "++(dest content)++" +o") (mode content)
-
--- Revoke op privs from a user
-revop :: String -> Net ()
-revop content = let {
-    dest = (!! 1) . words
-    ; mode = (!! 0) . words
-    } in write ("MODE "++(dest content)++" -o") (mode content)
+    } in if length (breakwords content) < 2
+          then usage user "~op"
+          else write ("MODE "++(dest content)++" +o") (mode content)
