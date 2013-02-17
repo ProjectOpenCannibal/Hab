@@ -52,7 +52,7 @@ connect = notify $ do
 io :: IO a -> Net a
 io = liftIO
 
--- Join a channel (must be imported everywhere without being in socket)
+-- Join a channel
 joinchan :: String -> Net ()
 joinchan channel = write "JOIN" channel
 

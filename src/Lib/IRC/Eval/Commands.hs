@@ -82,6 +82,8 @@ evaladcmd user usrreal content
     | "~topic" == content = usage user content
     -- | "~verify" == content = privmsg user "Usage is 'verify <password>'"
     -- | "~verify " `isPrefixOf` content = verifyNick user usrreal content
+    -- Before moving on to private command evalation check Addons for any admin
+    -- commands (this should always go last)
     | "~" `isPrefixOf` content = evalAddonsAdmin user usrreal content
     | otherwise = evalprivcmd user content
  
