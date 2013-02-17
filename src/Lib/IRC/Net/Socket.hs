@@ -12,9 +12,12 @@ module Lib.IRC.Net.Socket (
     -- Functions
     , connect
     , io
+    , joinchan
+    , privmsg
+    , write
     ) where
 
-import Control.Exception
+import qualified Control.Exception as E
 import Control.Monad.State
 import Network
 import System.IO
@@ -41,10 +44,25 @@ connect = notify $ do
     hSetBuffering h NoBuffering
     return (Bot h)
   where
-    notify = bracket_
+    notify = E.bracket_
         (printf "Connecting to %s ... " server >> hFlush stdout)
         (putStrLn "done.")
 
 -- Add an IO reference to pass data to our net monad (utilized in write)
 io :: IO a -> Net a
 io = liftIO
+
+-- Join a channel (must be imported everywhere without being in socket)
+joinchan :: String -> Net ()
+joinchan channel = write "JOIN" channel
+
+-- Wrap write up as a private message
+privmsg :: String -> String -> Net ()
+privmsg dest content = write "PRIVMSG" (dest++" :"++content)
+
+-- Send a message to the server (only if it's initialized)
+write :: String -> String -> Net ()
+write s t = do
+    h <- gets socket
+    io $ hPrintf h "%s %s\r\n" s t
+    io $ printf    "> %s %s\n" s t

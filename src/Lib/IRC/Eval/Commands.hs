@@ -9,7 +9,6 @@ module Lib.IRC.Eval.Commands (
     , evalprivcmd
     -- Export from HabCommands
     , identify
-    , joinchan
     , mayberejoin
     , regainnick
     ) where
@@ -27,7 +26,6 @@ import qualified Data.Text as T
 import Addons.IRC.Common
 import Lib.IRC.Eval.HabCommands
 import Lib.IRC.Net.Socket
-import Lib.IRC.Net.Write
 
 ---- Resources
 
@@ -57,7 +55,7 @@ listadcom user = do
 evalgodcmd :: String -> String -> String -> Net ()
 evalgodcmd user usrreal content
     | "~quit" == content = processquit
-    | otherwise = return ()
+    | otherwise = evaladcmd user usrreal content
 
 -- Process admin evaluation in the same way as gods
 evaladcmd :: String -> String -> String -> Net ()
@@ -67,15 +65,14 @@ evaladcmd user usrreal content
     | "~deop" == content = usage user content
     | "~id " `isPrefixOf` content = privmsg chan (drop 4 content)
     | "~id" == content = usage user content
-    | "~join " `isPrefixOf` content = write "JOIN" (drop 6 content)
+    | "~join " `isPrefixOf` content = joinchan (drop 6 content)
     | "~join" == content = usage user content
     | "~kick " `isPrefixOf` content = write "KICK" (drop 6 content)
     | "~kick" == content = usage user content
     | "~me " `isPrefixOf` content = action user (drop 4 content)
     | "~me" == content = usage user content
-    -- a cheap implementation of message, only works if you manually do the
-    -- channel or nick as #example :<message>
-    | "~msg " `isPrefixOf` content = write "PRIVMSG" (drop 5 content)
+    | "~msg " `isPrefixOf` content = usrmsg user (drop 5 content)
+    | "~msg" == content = usage user content
     | "~op " `isPrefixOf` content = setop user (drop 4 content)
     | "~op" == content = usage user content
     | "~opme" == content = write "MODE" (chan++" +o "++user)
@@ -85,7 +82,8 @@ evaladcmd user usrreal content
     | "~topic" == content = usage user content
     -- | "~verify" == content = privmsg user "Usage is 'verify <password>'"
     -- | "~verify " `isPrefixOf` content = verifyNick user usrreal content
-    | otherwise = return ()
+    | "~" `isPrefixOf` content = evalAddonsAdmin user usrreal content
+    | otherwise = evalprivcmd user content
  
 -- Evaluate commands sent as private messages
 evalprivcmd :: String -> String -> Net ()

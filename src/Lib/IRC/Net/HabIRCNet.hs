@@ -14,11 +14,10 @@ module Lib.IRC.Net.HabIRCNet (
     -- Functions
     , connect
     , io
-    ---- export write
+    , joinchan
     , privmsg
     , write
     ) where
 
 import Lib.IRC.Net.Listen
 import Lib.IRC.Net.Socket
-import Lib.IRC.Net.Write

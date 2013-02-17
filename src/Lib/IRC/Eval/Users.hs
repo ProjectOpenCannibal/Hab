@@ -11,7 +11,6 @@ import qualified Data.Text as T
 
 --Local modules
 --import Lib.IRC.Net.Socket
---import Lib.IRC.Net.Write
 
 -- Define admins and gods (god provides quit)
 gods = ["IngCr3at1on"]

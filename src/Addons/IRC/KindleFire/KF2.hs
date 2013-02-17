@@ -5,7 +5,6 @@ module Addons.IRC.KindleFire.KF2 (
     ) where
 
 import Lib.IRC.Net.Socket
-import Lib.IRC.Net.Write
 
 kf2 = "#kf2-dev"
 
@@ -28,4 +27,3 @@ evalKF2Addons user origin content =
         "!root"     -> privmsg origin kf2rootlink
         "!udev"     -> privmsg origin udevsetup
         otherwise   -> return ()
-

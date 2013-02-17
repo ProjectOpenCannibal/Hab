@@ -1,13 +1,13 @@
 module Lib.IRC.Eval.HabCommands (
     action
     , identify
-    , joinchan
     , processquit
     , mayberejoin
     , regainnick
     , revop
     , setop
     , usage
+    , usrmsg
     ) where
 
 import Data.List
@@ -16,8 +16,8 @@ import qualified Data.Text as T
 import System.Exit
 
 -- Local modules
+import Addons.IRC.Common
 import Lib.IRC.Net.Socket
-import Lib.IRC.Net.Write
 
 ---- Commands called directly by Hab
 
@@ -40,10 +40,6 @@ identify = do
     -- (one folder above src/Main.hs)
     password <- io (readFile "../.password")
     privmsg "nickserv" ("identify "++password)
-
--- Join a channel
-joinchan :: String -> Net ()
-joinchan channel = write "JOIN" channel
 
 -- Check who was kicked and if it was the bot, rejoin the channel in question
 mayberejoin :: String -> Net ()
@@ -105,9 +101,23 @@ usage user content =
         "~join"   -> privmsg user "Usage: '~join <channel>'"
         "~kick"   -> privmsg user "Usage: '~kick <channel> <nick> :<message>'"
         "~me"     -> privmsg user "Usage: '~me <channel> <action>'"
+        "~msg"    -> do
+                         privmsg user "Usage: '~msg <dest> <message>'"
+                         privmsg user "please note dest may be a user or channel."
         "~op"     -> privmsg user "Usage: '~op <nick> <channel>'"
         "~part"   -> privmsg user "Usage: '~part <channel>'"
         "~topic"  -> do
                          privmsg user "Usage: '~topic <topic>'"
                          privmsg user ("please note this applies to "++chan++" only.")
-        otherwise -> return ()
+        otherwise -> usageAddons user content
+
+-- Send a message (to channel or nick)
+-- (code feels redundant, I don't like breakwords in let...)
+usrmsg :: String -> String -> Net ()
+usrmsg user content = let {
+    breakwords = words
+    ; dest = (!! 0) . words
+    ; msg = tail -- need a way to drop the first word from the tail
+    } in if length (breakwords content) < 2
+        then usage user "~msg"
+        else privmsg (dest content) (msg content)

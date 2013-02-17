@@ -11,7 +11,6 @@ import System.Exit
 -- Local modules
 import Lib.IRC.Eval.Eval
 import Lib.IRC.Net.Socket
-import Lib.IRC.Net.Write
 
 -- Listen to the socket and respond
 listen :: Handle -> Net ()

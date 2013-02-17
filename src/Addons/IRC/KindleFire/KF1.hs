@@ -5,7 +5,6 @@ module Addons.IRC.KindleFire.KF1 (
     ) where
 
 import Lib.IRC.Net.Socket
-import Lib.IRC.Net.Write
 
 kf1 = "#kindlefire-dev"
 

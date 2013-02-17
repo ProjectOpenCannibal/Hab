@@ -2,7 +2,6 @@ module Lib.IRC.Eval.Eval (
     eval
     , evalmode
     -- Exported from HabCommands through Commands
-    , joinchan
     , mayberejoin
     ) where
 
@@ -13,7 +12,6 @@ import qualified Data.Text as T
 import Lib.IRC.Eval.Commands
 import Lib.IRC.Eval.Users
 import Lib.IRC.Net.Socket
-import Lib.IRC.Net.Write
 
 -- Evaluate a command
 eval :: String -> String -> String -> String -> String -> Net ()
@@ -37,15 +35,10 @@ eval user usrreal origin msgtype content
             then do
                 if isGod user
                 --if isGod user && isAdminConfirmed user usrreal
-                    then do
-                        evalgodcmd user usrreal content
-                        evaladcmd user usrreal content
-                        evalprivcmd user content
+                    then evalgodcmd user usrreal content
                     else if isAdmin user
                     --if isAdmin user && isAdminConfirmed user usrreal
-                        then do
-                            evaladcmd user usrreal content
-                            evalprivcmd user content
+                        then evaladcmd user usrreal content
                     --else if isGod user || isAdmin user
                         --then do
                             --privmsg user "Your nick is recognized as an admin but you are not verified..."
