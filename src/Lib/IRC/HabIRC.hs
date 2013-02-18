@@ -1,5 +1,5 @@
 module Lib.IRC.HabIRC (
-    ---- export listen
+    ---- export listen (from eval)
     listen
     ---- export socket
     , chan          -- String
@@ -19,5 +19,5 @@ module Lib.IRC.HabIRC (
     , write       -- String -> String -> Net ()
     ) where
 
-import Lib.IRC.Listen
+import Lib.IRC.Eval
 import Lib.IRC.Socket
