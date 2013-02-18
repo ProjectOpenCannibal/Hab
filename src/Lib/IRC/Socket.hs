@@ -1,20 +1,20 @@
-module Lib.IRC.Net.Socket (
+module Lib.IRC.Socket (
     -- Resource / connection variables
-    chan
-    , deftopic
-    , nick
-    , realname
-    , server
-    , source
+    chan          -- String
+    , deftopic    -- String
+    , nick        -- String
+    , realname    -- String
+    , server      -- String
+    , source      -- String
     -- Net / Bot monad
-    , Bot(socket)
-    , Net
+    , Bot(socket) -- Bot (Handle)
+    , Net         -- StateT Bot IO
     -- Functions
-    , connect
-    , io
-    , joinchan
-    , privmsg
-    , write
+    , connect     -- IO Bot
+    , io          -- IO a -> Net a
+    , joinchan    -- String -> Net ()
+    , privmsg     -- String -> String -> Net ()
+    , write       -- String -> String -> Net ()
     ) where
 
 import qualified Control.Exception as E

@@ -1,14 +1,14 @@
-module Addons.IRC.Common (
-    joinAddonChans
-    , listAddons
-    , listAddonsAdmin
-    , evalAddons
-    , evalAddonsAdmin
-    , usageAddons
+module Addons.IRC.IRCCommon (
+    joinAddonChans    -- Net ()
+    , listAddons      -- String -> Net ()
+    , listAddonsAdmin -- String -> Net ()
+    , evalAddons      -- String -> String -> String -> Net ()
+    , evalAddonsAdmin -- String -> String -> String -> Net ()
+    , usageAddons     -- String -> String -> Net ()
     ) where
 
 import Addons.IRC.KindleFire.KFCommon
-import Lib.IRC.Net.Socket
+import Lib.IRC.Socket
 
 joinAddonChans :: Net ()
 joinAddonChans = do

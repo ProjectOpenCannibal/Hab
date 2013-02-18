@@ -1,10 +1,10 @@
 module Addons.IRC.KindleFire.KF1 (
-    listKF1Cmds
-    , evalKF1Addons
-    , kf1
+    listKF1Cmds     -- String -> Net ()
+    , evalKF1Addons -- String -> String -> String -> Net ()
+    , kf1           -- String
     ) where
 
-import Lib.IRC.Net.Socket
+import Lib.IRC.Socket
 
 kf1 = "#kindlefire-dev"
 

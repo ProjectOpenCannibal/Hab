@@ -1,7 +1,7 @@
-module Lib.IRC.Eval.Users (
+module Lib.IRC.Users (
     -- Verification commands
-    isAdmin
-    , isGod
+    isAdmin -- String -> Bool
+    , isGod -- String -> Bool
     ) where
 
 import Data.List
@@ -10,7 +10,7 @@ import qualified Data.Text as T
 --import System.IO
 
 --Local modules
---import Lib.IRC.Net.Socket
+--import Lib.IRC.Socket
 
 -- Define admins and gods (god provides quit)
 gods = ["IngCr3at1on"]

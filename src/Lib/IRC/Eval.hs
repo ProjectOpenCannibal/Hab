@@ -1,17 +1,17 @@
-module Lib.IRC.Eval.Eval (
-    eval
-    , evalmode
+module Lib.IRC.Eval (
+    eval          -- String -> String -> String -> String -> String -> Net ()
+    , evalmode    -- String -> String -> String -> Net ()
     -- Exported from HabCommands through Commands
-    , mayberejoin
+    , mayberejoin -- String -> Net ()
     ) where
 
 import Data.List
 import qualified Data.Text as T
 
 -- Local modules
-import Lib.IRC.Eval.Commands
-import Lib.IRC.Eval.Users
-import Lib.IRC.Net.Socket
+import Lib.IRC.Commands
+import Lib.IRC.Users
+import Lib.IRC.Socket
 
 -- Evaluate a command
 eval :: String -> String -> String -> String -> String -> Net ()

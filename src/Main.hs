@@ -4,22 +4,30 @@ import qualified Control.Exception as E
 import Control.Monad.State
 import System.IO
 
--- Local modules
-import Addons.IRC.Common
-import Lib.IRC.Eval.HabCommands
-import Lib.IRC.Net.HabIRCNet
+-- Local modules.
+import Addons.IRC.IRCCommon -- Imported for our additional channels.
+import Lib.IRC.HabCommands
+import qualified Lib.IRC.HabIRC as IRC
+--import qualified Lib.XMPP.HabXMPP as XMPP
 
 runbot :: IO ()
-runbot = E.bracket connect disconnect loop >> return ()
-  where
-    disconnect = hClose . socket
-    loop st = E.catch (runStateT run st) (\e -> const (return ((), st)) (e :: E.IOException))
+runbot =
+    let loop st = E.catch (runStateT run st) (\e -> const (return ((), st)) (e :: E.IOException))
+        in E.bracket connect disconnect loop >> return ()
 
--- Join our primary channel and initialize our listener
-run :: Net ()
+-- Join our primary channel and initialize our listener.
+run :: IRC.Net ()
 run = do
-    write "NICK" nick
-    write "USER" (nick++" 0 * :"++realname)
-    joinchan chan
+    IRC.write "NICK" IRC.nick
+    IRC.write "USER" (IRC.nick++" 0 * :"++IRC.realname)
+    IRC.joinchan IRC.chan
     joinAddonChans
-    gets socket >>= listen
+    gets IRC.socket >>= IRC.listen
+
+connect = do
+    IRC.connect
+    --XMPP.connect
+
+disconnect = do
+    hClose . IRC.socket
+    --hClose . XMPP.socket

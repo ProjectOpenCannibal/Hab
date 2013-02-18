@@ -1,16 +1,16 @@
-module Lib.IRC.Eval.Commands (
+module Lib.IRC.Commands (
     -- Command listing
-    listadcom
-    , listcom
+    listadcom      -- String -> Net ()
+    , listcom      -- String -> Net ()
     -- Command evaluation
-    , evaladcmd
-    , evalchancmd
-    , evalgodcmd
-    , evalprivcmd
+    , evaladcmd    -- String -> String -> String -> Net ()
+    , evalchancmd  -- String -> String -> String -> Net ()
+    , evalgodcmd   -- String -> String -> String -> Net ()
+    , evalprivcmd  -- String -> String -> Net ()
     -- Export from HabCommands
-    , identify
-    , mayberejoin
-    , regainnick
+    , identify    -- Net ()
+    , mayberejoin -- String -> Net ()
+    , regainnick  -- Net ()
     ) where
 
 --import Data.Either.Utils
@@ -23,9 +23,9 @@ import qualified Data.Text as T
 --import Data.ConfigFile
 
 -- Local modules
-import Addons.IRC.Common
-import Lib.IRC.Eval.HabCommands
-import Lib.IRC.Net.Socket
+import Addons.IRC.IRCCommon
+import Lib.IRC.HabCommands
+import Lib.IRC.Socket
 
 ---- Resources
 

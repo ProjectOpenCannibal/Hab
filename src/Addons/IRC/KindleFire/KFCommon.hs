@@ -1,14 +1,14 @@
 module Addons.IRC.KindleFire.KFCommon (
-    listKindleAddons
-    , evalKindleAddons
+    listKindleAddons   -- String -> Net ()
+    , evalKindleAddons -- String -> String -> String -> Net ()
     -- export our channel references
-    , kf1
-    , kf2
+    , kf1              -- String
+    , kf2              -- String
     ) where
 
 import Addons.IRC.KindleFire.KF1
 import Addons.IRC.KindleFire.KF2
-import Lib.IRC.Net.Socket
+import Lib.IRC.Socket
 
 chanspeccmd = "The following commands are specific to this channel"
 

@@ -1,13 +1,13 @@
-module Lib.IRC.Eval.HabCommands (
-    action
-    , identify
-    , processquit
-    , mayberejoin
-    , regainnick
-    , revop
-    , setop
-    , usage
-    , usrmsg
+module Lib.IRC.HabCommands (
+    action        -- String -> String -> Net ()
+    , identify    -- Net ()
+    , mayberejoin -- String -> Net ()
+    , processquit -- Net ()
+    , regainnick  -- Net ()
+    , revop       -- String -> String -> Net ()
+    , setop       -- String -> String -> Net ()
+    , usage       -- String -> String -> Net ()
+    , usrmsg      -- String -> String -> Net ()
     ) where
 
 import Data.List
@@ -16,8 +16,8 @@ import qualified Data.Text as T
 import System.Exit
 
 -- Local modules
-import Addons.IRC.Common
-import Lib.IRC.Net.Socket
+import Addons.IRC.IRCCommon
+import Lib.IRC.Socket
 
 ---- Commands called directly by Hab
 
