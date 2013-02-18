@@ -7,7 +7,7 @@ module Lib.IRC.HabCommands (
     , revop       -- String -> String -> Net ()
     , setop       -- String -> String -> Net ()
     , usage       -- String -> String -> Net ()
-    , usrmsg      -- String -> String -> Net ()
+    --, usrmsg      -- String -> String -> Net ()
     ) where
 
 import Data.List
