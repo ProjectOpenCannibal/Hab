@@ -2,8 +2,6 @@ module Lib.IRC.Eval (
     eval          -- String -> String -> String -> String -> String -> Net ()
     , evalmode    -- String -> String -> String -> Net ()
     , listen      -- Handle -> Net ()
-    -- Exported from HabCommands through Commands
-    , mayberejoin -- String -> Net ()
     ) where
 
 import Data.List
@@ -27,8 +25,8 @@ eval user usrreal origin msgtype content
     -- Check 'NOTICE' messages prior to 'PRIVMSG'
     | "NOTICE" == msgtype
         -- Use this for identify instead of calling it automatically
-        -- (old identify tried to identify itself before NickServ notices
-        -- in the of a NICK regain)
+        -- (old identify tried to identify itself before NickServ
+        -- notices in the case of a NICK regain)
         = let isIdRequest x = "This nickname is registered. " `isPrefixOf` x
             in if isPriv origin && isIdRequest content
                 then identify
@@ -41,7 +39,7 @@ eval user usrreal origin msgtype content
                 --if isGod user && isAdminConfirmed user usrreal
                     then evalgodcmd user usrreal content
                     else if isAdmin user
-                    --if isAdmin user && isAdminConfirmed user usrreal
+                    --else if isAdmin user && isAdminConfirmed user usrreal
                         then evaladcmd user usrreal content
                     --else if isGod user || isAdmin user
                         --then do
@@ -70,13 +68,13 @@ listen h = forever $ do
     io (putStrLn s)
     if ping s
         then pong s
-        -- In the event of a 'MODE' change evaluate it in Eval.Eval
+        -- In the event of a 'MODE' change, see if it's the bot and react
         else if modechange s
             then evalmode (origin s) (modetype s) (modwho s)
-        -- In the evenf of a 'KICK' message on the socket, check if it's the bot
+        -- In the event of a 'KICK' message on the socket, check if it's the bot
         else if kick s
             then mayberejoin s
-        -- Evaluate all other messages through Eval.Eval as if commands
+        -- Evaluate all other messages
         else eval (user s) (usrreal s) (origin s) (msgtype s) (content s)
   where
     -- Always listening

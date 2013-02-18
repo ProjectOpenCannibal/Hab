@@ -102,7 +102,8 @@ usage user content =
         "~kick"   -> privmsg user "Usage: '~kick <channel> <nick> :<message>'"
         "~me"     -> privmsg user "Usage: '~me <channel> <action>'"
         "~msg"    -> do
-                         privmsg user "Usage: '~msg <dest> <message>'"
+                         --privmsg user "Usage: '~msg <dest> <message>'"
+                         privmsg user "Usage: '~msg <dest> :<message>'"
                          privmsg user "please note dest may be a user or channel."
         "~op"     -> privmsg user "Usage: '~op <nick> <channel>'"
         "~part"   -> privmsg user "Usage: '~part <channel>'"
@@ -113,11 +114,22 @@ usage user content =
 
 -- Send a message (to channel or nick)
 -- (code feels redundant, I don't like breakwords in let...)
+{- Compile Error:
+Lib/IRC/HabCommands.hs:121:21:
+    Couldn't match expected type `[String]'
+                with actual type `String -> [String]'
+    In the first argument of `unwords', namely `rawmsg'
+    In the expression: unwords rawmsg
+    In an equation for `msg': msg = unwords rawmsg
+-}
+{-
 usrmsg :: String -> String -> Net ()
 usrmsg user content = let {
     breakwords = words
     ; dest = (!! 0) . words
-    ; msg = tail -- need a way to drop the first word from the tail
+    ; rawmsg = tail . words
+    ; msg = unwords rawmsg
     } in if length (breakwords content) < 2
         then usage user "~msg"
         else privmsg (dest content) (msg content)
+-}
