@@ -1,16 +1,17 @@
 module Lib.IRC.Commands (
     -- Command listing
-    listadcom      -- String -> Net ()
-    , listcom      -- String -> Net ()
+    listadcom       -- String -> Net ()
+    , listcom       -- String -> Net ()
     -- Command evaluation
-    , evaladcmd    -- String -> String -> String -> Net ()
-    , evalchancmd  -- String -> String -> String -> Net ()
-    , evalgodcmd   -- String -> String -> String -> Net ()
-    , evalprivcmd  -- String -> String -> Net ()
+    , evaladcmd     -- String -> String -> String -> Net ()
+    , evalchancmd   -- String -> String -> String -> Net ()
+    , evalgodcmd    -- String -> String -> String -> Net ()
+    , evalprivcmd   -- String -> String -> Net ()
     -- Export from HabCommands
-    , identify    -- Net ()
-    , mayberejoin -- String -> Net ()
-    , regainnick  -- Net ()
+    , identify      -- Net ()
+    , mayberejoin   -- String -> Net ()
+    , regainnick    -- Net ()
+    , updateSeenMap -- String -> String -> String -> Net ()
     ) where
 
 --import Data.Either.Utils
@@ -38,7 +39,7 @@ clilink = "http://terokarvinen.com/command_line.html"
 listcom :: String -> Net ()
 listcom user = do
     privmsg user "Currently supported commands are as follows:"
-    privmsg user "!commands, !cli and !source"
+    privmsg user "!commands, !cli, !seen and !source"
     -- List any commands from our addons
     listAddons user
 
@@ -81,8 +82,10 @@ evaladcmd user usrreal content
     | "~part" == content = usage user content
     | "~topic " `isPrefixOf` content = write ("TOPIC "++chan) (" :"++drop 7 content)
     | "~topic" == content = usage user content
-    -- | "~verify" == content = privmsg user "Usage is 'verify <password>'"
-    -- | "~verify " `isPrefixOf` content = verifyNick user usrreal content
+    {-
+    | "~verify" == content = privmsg user "Usage is 'verify <password>'"
+    | "~verify " `isPrefixOf` content = verifyNick user usrreal content
+    -}
     -- Before moving on to private command evalation check Addons for any admin
     -- commands (this should always go last)
     | "~" `isPrefixOf` content = evalAddonsAdmin user usrreal content
@@ -93,14 +96,23 @@ evalprivcmd :: String -> String -> Net ()
 evalprivcmd user content
     | "!cli" == content = privmsg user clilink
     | "!commands" == content = listcom user
+    {- The second value in seen is origin, if this is received on a privmsg
+	   origin is actually parsed out as 'Hab' pass user instead so Hab knows
+       who to respond to. -}
+    | "!seen " `isPrefixOf` content = seen (drop 6 content) user
+    | "!seen" == content = usage user content
     | "!source" == content = privmsg user source
-    | otherwise = return ()
+    -- For addons in private message send the user as the origin so's to return
+    -- to the correct location.
+    | otherwise = evalAddons user user content
  
 -- Evaluate in channel commands
 evalchancmd :: String -> String -> String -> Net ()
 evalchancmd user origin content
     | "!cli" == content = privmsg origin clilink
     | "!commands" == content = listcom origin
+    | "!seen " `isPrefixOf` content = seen (drop 6 content) origin
+    | "!seen" == content = usage origin content
     | "!source" == content = privmsg origin source
     -- Evaluate channel specific commands
     | otherwise = evalAddons user origin content

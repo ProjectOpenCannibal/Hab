@@ -15,39 +15,68 @@ import Lib.IRC.Commands
 import Lib.IRC.Users
 import Lib.IRC.Socket
 
+--data LastUser = LastUser String
+
 -- Evaluate a command
 eval :: String -> String -> String -> String -> String -> Net ()
 eval user usrreal origin msgtype content
-    -- Error codes such as someone else using the bot's NICK come in as type
-    -- and should be checked before anything else
+    -- Error and server codes (such as someone else using the bot's NICK) come
+    -- through in the form of msgtype and should be checked first.
+    {-
+    Need a way to store the lastuser to send a command to the bot temporarily
+    so that we can return error messages if neccessary.
+
+    Couldn't match expected type `[a0]'
+                with actual type `String -> LastUser'
+    In the first argument of `null', namely `LastUser'
+    In the expression: null LastUser
+    In the expression:
+      if null LastUser then return () else privmsg LastUser content
+    -}{-
+    | "401" == msgtype -- Failed msg, no such nick/channel.
+        = if null LastUser
+            then return ()
+            else privmsg LastUser content
+    | "403" == msgtype -- Failed join, no such channel.
+        = if null LastUser
+            then return ()
+            else privmsg LastUser content
+    -}
     | "433" == msgtype = regainnick
     | "437" == msgtype = regainnick
     -- Check 'NOTICE' messages prior to 'PRIVMSG'
     | "NOTICE" == msgtype
-        -- Use this for identify instead of calling it automatically
-        -- (old identify tried to identify itself before NickServ
-        -- notices in the case of a NICK regain)
-        = let isIdRequest x = "This nickname is registered. " `isPrefixOf` x
-            in if isPriv origin && isIdRequest content
-                then identify
-                else return ()
+        = let {
+            -- Used for identification.
+            isIdRequest x = "This nickname is registered. " `isPrefixOf` x
+        }
+        -- Identify but only to NickServ.
+        in if isPriv origin && isIdRequest content && user == "NickServ"
+            then identify
+            else return ()
     -- Confirm the type instead of switching on all messages.
     | "PRIVMSG" ==  msgtype
         = if isPriv origin
             then do
+                -- Set the last user to send a command to Hab.
+                --LastUser <- user
                 if isGod user
                 --if isGod user && isAdminConfirmed user usrreal
                     then evalgodcmd user usrreal content
                     else if isAdmin user
                     --else if isAdmin user && isAdminConfirmed user usrreal
                         then evaladcmd user usrreal content
-                    --else if isGod user || isAdmin user
-                        --then do
-                            --privmsg user "Your nick is recognized as an admin but you are not verified..."
-                            --privmsg user "Please verify your nick to use admin commands."
-                            --evalprivcmd user content
+                    {-
+                    else if isGod user || isAdmin user
+                        then do
+                            privmsg user "Your nick is recognized as an admin but you are not verified..."
+                            privmsg user "Please verify your nick to use admin commands."
+                            evalprivcmd user content
+                    -}
                     else evalprivcmd user content
-            else evalchancmd user origin content
+            else do
+                updateSeenMap user origin content
+                evalchancmd user origin content
     | otherwise = return ()
 
 -- Evaluate a MODE change

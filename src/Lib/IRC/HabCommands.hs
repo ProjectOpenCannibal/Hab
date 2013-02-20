@@ -1,19 +1,25 @@
 module Lib.IRC.HabCommands (
-    action        -- String -> String -> Net ()
-    , identify    -- Net ()
-    , mayberejoin -- String -> Net ()
-    , processquit -- Net ()
-    , regainnick  -- Net ()
-    , revop       -- String -> String -> Net ()
-    , setop       -- String -> String -> Net ()
-    , usage       -- String -> String -> Net ()
-    --, usrmsg      -- String -> String -> Net ()
+    action          -- String -> String -> Net ()
+    , identify      -- Net ()
+    , mayberejoin   -- String -> Net ()
+    , processquit   -- Net ()
+    , regainnick    -- Net ()
+    , revop         -- String -> String -> Net ()
+    , seen          -- String -> String -> Net ()
+    , setop         -- String -> String -> Net ()
+    , usage         -- String -> String -> Net ()
+    --, usrmsg        -- String -> String -> Net ()
+    , updateSeenMap -- String -> String -> String -> Net ()
     ) where
 
+import Control.Monad.State
 import Data.List
+import qualified Data.Map as Map
 import qualified Data.Text as T
 --import System.IO.Unsafe
 import System.Exit
+import System.Time
+import Text.Printf
 
 -- Local modules
 import Addons.IRC.IRCCommon
@@ -52,6 +58,19 @@ mayberejoin s = do
     origin = (!! 2) . words
     whois = (!! 3) . words
 
+-- Pretty print the date in '1d 9h 9m 17s' format
+pretty :: TimeDiff -> String
+pretty td = join . intersperse " " . filter (not . null) . map f $
+    [(years          ,"y") ,(months `mod` 12,"m")
+    ,(days   `mod` 28,"d") ,(hours  `mod` 24,"h")
+    ,(mins   `mod` 60,"m") ,(secs   `mod` 60,"s")]
+  where
+    secs    = abs $ tdSec td  ; mins   = secs   `div` 60
+    hours   = mins   `div` 60 ; days   = hours  `div` 24
+    months  = days   `div` 28 ; years  = months `div` 12
+    f (i,s) | i == 0    = []
+            | otherwise = show i ++ s
+
 -- Perform any neccessary actions before logging off/quitting
 processquit :: Net ()
 processquit = do
@@ -78,6 +97,16 @@ revop user content = let {
           then usage user "~deop"
           else write ("MODE "++(dest content)++" -o") (mode content)
 
+-- Check our SeenMap and list when we last saw a given user
+seen :: String -> String -> Net ()
+seen user origin = do
+    map <- gets seenMap
+    now <- io getClockTime
+    privmsg origin $ maybe (printf "I have not seen '%s'" user) (foo now) $ Map.lookup user map
+  where
+    foo curTime (SeenEntry o m t) =
+        printf "%s was last seen in %s %s ago saying: %s" user o (pretty $ diffClockTimes curTime t) m
+
 -- Assign op privs to a user in any channel we have op privs in
 -- (code feels redundant, I don't like breakwords in let...)
 -- ToDo: write a function to grab dest and func regardless of order passed
@@ -90,26 +119,37 @@ setop user content = let {
           then usage user "~op"
           else write ("MODE "++(dest content)++" +o") (mode content)
 
+-- Update our map of people that we've seen
+updateSeenMap :: String -> String -> String -> Net ()
+updateSeenMap user origin content = do
+    b <- get
+    map  <- gets seenMap
+    time <- io getClockTime
+    put $ b { seenMap = Map.insert user (SeenEntry origin content time) map }
+
 -- List all of our usage commands for easy reference
 usage :: String -> String -> Net ()
 usage user content =
     case content of
-        "~deop"   -> privmsg user "Usage: '~deop <nick> <channel>'"
+        -- For the sake of order list admin commands first.
+        "~deop"   -> privmsg user "Usage: '~deop <nick> <channel>'."
         "~id"     -> do
-                         privmsg user "Usage: '~id <msg>'"
+                         privmsg user "Usage: '~id <msg>',"
                          privmsg user ("directs message to "++chan++"only.")
-        "~join"   -> privmsg user "Usage: '~join <channel>'"
-        "~kick"   -> privmsg user "Usage: '~kick <channel> <nick> :<message>'"
-        "~me"     -> privmsg user "Usage: '~me <channel> <action>'"
+        "~join"   -> privmsg user "Usage: '~join <channel>'."
+        "~kick"   -> privmsg user "Usage: '~kick <channel> <nick> :<message>'."
+        "~me"     -> privmsg user "Usage: '~me <channel> <action>'."
         "~msg"    -> do
-                         --privmsg user "Usage: '~msg <dest> <message>'"
-                         privmsg user "Usage: '~msg <dest> :<message>'"
+                         --privmsg user "Usage: '~msg <dest> <message>'."
+                         privmsg user "Usage: '~msg <dest> :<message>',"
                          privmsg user "please note dest may be a user or channel."
-        "~op"     -> privmsg user "Usage: '~op <nick> <channel>'"
-        "~part"   -> privmsg user "Usage: '~part <channel>'"
+        "~op"     -> privmsg user "Usage: '~op <nick> <channel>'."
+        "~part"   -> privmsg user "Usage: '~part <channel>'."
         "~topic"  -> do
-                         privmsg user "Usage: '~topic <topic>'"
+                         privmsg user "Usage: '~topic <topic>',"
                          privmsg user ("please note this applies to "++chan++" only.")
+        -- List non-admin commands
+        "!seen"   -> privmsg user "Usage: '!seen <nick>'."
         otherwise -> usageAddons user content
 
 -- Send a message (to channel or nick)

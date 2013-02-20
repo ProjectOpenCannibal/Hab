@@ -2,8 +2,7 @@ module Lib.IRC.HabIRC (
     ---- export listen (from eval)
     listen
     ---- export socket
-    , chan          -- String
-    , deftopic    -- String
+    , chan        -- String
     , nick        -- String
     , realname    -- String
     , server      -- String

@@ -1,32 +1,34 @@
 module Lib.IRC.Socket (
     -- Resource / connection variables
-    chan          -- String
-    , deftopic    -- String
-    , nick        -- String
-    , realname    -- String
-    , server      -- String
-    , source      -- String
-    -- Net / Bot monad
-    , Bot(socket) -- Bot (Handle)
-    , Net         -- StateT Bot IO
+    chan                   -- String
+    , nick                 -- String
+    , realname             -- String
+    , server               -- String
+    , source               -- String
+    -- Net monad
+    , Net                  -- StateT Bot IO
+    -- Data storage / types
+    , Bot(socket, seenMap) -- Bot (Handle, SeenEntry)
+    , SeenEntry(SeenEntry) -- SeenEntry String String Clocktime
     -- Functions
-    , connect     -- IO Bot
-    , io          -- IO a -> Net a
-    , joinchan    -- String -> Net ()
-    , privmsg     -- String -> String -> Net ()
-    , write       -- String -> String -> Net ()
+    , connect              -- IO Bot
+    , io                   -- IO a -> Net a
+    , joinchan             -- String -> Net ()
+    , privmsg              -- String -> String -> Net ()
+    , write                -- String -> String -> Net ()
     ) where
 
 import qualified Control.Exception as E
 import Control.Monad.State
+import qualified Data.Map as M
 import Network
 import System.IO
+import System.Time
 import Text.Printf
 
 -- Define our channel variables in Socket for easy importation (I want to
 -- replace this with a .config file, the password will also be passed from this)
 chan = "#projectopencannibal"
-deftopic = "Project Open Cannibal and Cannibal Open Touch Recovery | http://www.projectopencannibal.net/ || Say hello to Hab (Haskell Bot) | https://github.com/ProjectOpenCannibal/Hab"
 nick = "Hab"
 port = 6667
 realname = "Hab (Haskell Bot), a simple FOSS IRC bot (obviously written in Haskell) | https://github.com/ProjectOpenCannibal/Hab"
@@ -35,14 +37,19 @@ source = "https://github.com/ProjectOpenCannibal/Hab/commits/"
 
 -- Thread our socket actions through a Net monad
 type Net = StateT Bot IO
-data Bot = Bot { socket :: Handle }
+
+data Bot = Bot {
+    socket  :: Handle,
+    seenMap :: M.Map String SeenEntry
+    }
+data SeenEntry = SeenEntry String String ClockTime
 
 -- Connect to the server and initialize the bot
 connect :: IO Bot
 connect = notify $ do
     h <- connectTo server (PortNumber (fromIntegral port))
     hSetBuffering h NoBuffering
-    return (Bot h)
+    return (Bot h M.empty)
   where
     notify = E.bracket_
         (printf "Connecting to %s ... " server >> hFlush stdout)
