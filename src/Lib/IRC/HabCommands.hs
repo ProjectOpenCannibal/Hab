@@ -148,6 +148,7 @@ usage user content =
         "~topic"  -> do
                          privmsg user "Usage: '~topic <topic>',"
                          privmsg user ("please note this applies to "++chan++" only.")
+        "~verify" -> privmsg user "Usage: '~verify <password>'."
         -- List non-admin commands
         "!seen"   -> privmsg user "Usage: '!seen <nick>'."
         otherwise -> usageAddons user content

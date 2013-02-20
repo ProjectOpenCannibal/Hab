@@ -4,18 +4,19 @@ module Lib.IRC.Eval (
     , listen      -- Handle -> Net ()
     ) where
 
+import Control.Monad.State
 import Data.List
+import qualified Data.Map as Map
 import qualified Data.Text as T
 import Network
 import System.IO
 import System.Exit
+import Text.Printf
 
 -- Local modules
 import Lib.IRC.Commands
 import Lib.IRC.Users
 import Lib.IRC.Socket
-
---data LastUser = LastUser String
 
 -- Evaluate a command
 eval :: String -> String -> String -> String -> String -> Net ()
@@ -26,21 +27,33 @@ eval user usrreal origin msgtype content
     Need a way to store the lastuser to send a command to the bot temporarily
     so that we can return error messages if neccessary.
 
-    Couldn't match expected type `[a0]'
-                with actual type `String -> LastUser'
-    In the first argument of `null', namely `LastUser'
-    In the expression: null LastUser
+    Couldn't match expected type `StateT Bot IO ()'
+                with actual type `String -> Net ()'
+    In a stmt of a 'do' block:
+      privmsg
+      $ (maybe ("IngCr3at1on") (foo) $ Map.lookup last map) content
     In the expression:
-      if null LastUser then return () else privmsg LastUser content
+      do { map <- gets lastUser;
+           privmsg
+           $ (maybe ("IngCr3at1on") (foo) $ Map.lookup last map) content }
+    In the expression:
+      let foo (LastUser u) = printf "%s" u
+      in
+        do { map <- gets lastUser;
+             privmsg
+             $ (maybe ("IngCr3at1on") (foo) $ Map.lookup last map) content }
+
     -}{-
     | "401" == msgtype -- Failed msg, no such nick/channel.
-        = if null LastUser
-            then return ()
-            else privmsg LastUser content
+        = let foo (LastUser u) = printf "%s" u
+            in do
+                map <- gets lastUser
+                privmsg $ (maybe ("IngCr3at1on") (foo) $ Map.lookup last map) content
     | "403" == msgtype -- Failed join, no such channel.
-        = if null LastUser
-            then return ()
-            else privmsg LastUser content
+        = let foo (LastUser u) = printf "%s" u
+            in do
+                map <- gets lastUser
+                privmsg $ (maybe ("IngCr3at1on") (foo) $ Map.lookup last map) content
     -}
     | "433" == msgtype = regainnick
     | "437" == msgtype = regainnick
@@ -58,8 +71,12 @@ eval user usrreal origin msgtype content
     | "PRIVMSG" ==  msgtype
         = if isPriv origin
             then do
-                -- Set the last user to send a command to Hab.
-                --LastUser <- user
+                -- Set the last user to send a private message command to Hab.
+                {-
+                b <- get
+                map <- gets lastUser
+                put $ b { lastUser = Map.insert last (LastUser user) map }
+                -}
                 if isGod user
                 --if isGod user && isAdminConfirmed user usrreal
                     then evalgodcmd user usrreal content

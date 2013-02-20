@@ -8,7 +8,9 @@ module Lib.IRC.Socket (
     -- Net monad
     , Net                  -- StateT Bot IO
     -- Data storage / types
-    , Bot(socket, seenMap) -- Bot (Handle, SeenEntry)
+    , Bot(socket,          -- Handle
+          confirmedAdmins, -- Map String String
+          seenMap)         -- Map String SeenEntry
     , SeenEntry(SeenEntry) -- SeenEntry String String Clocktime
     -- Functions
     , connect              -- IO Bot
@@ -39,8 +41,9 @@ source = "https://github.com/ProjectOpenCannibal/Hab/commits/"
 type Net = StateT Bot IO
 
 data Bot = Bot {
-    socket  :: Handle,
-    seenMap :: M.Map String SeenEntry
+    socket          :: Handle,
+    confirmedAdmins :: M.Map String String,
+    seenMap         :: M.Map String SeenEntry
     }
 data SeenEntry = SeenEntry String String ClockTime
 
@@ -49,7 +52,7 @@ connect :: IO Bot
 connect = notify $ do
     h <- connectTo server (PortNumber (fromIntegral port))
     hSetBuffering h NoBuffering
-    return (Bot h M.empty)
+    return (Bot h M.empty M.empty)
   where
     notify = E.bracket_
         (printf "Connecting to %s ... " server >> hFlush stdout)

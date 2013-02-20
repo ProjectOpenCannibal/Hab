@@ -27,6 +27,7 @@ import qualified Data.Text as T
 import Addons.IRC.IRCCommon
 import Lib.IRC.HabCommands
 import Lib.IRC.Socket
+import Lib.IRC.Users
 
 ---- Resources
 
@@ -83,8 +84,8 @@ evaladcmd user usrreal content
     | "~topic " `isPrefixOf` content = write ("TOPIC "++chan) (" :"++drop 7 content)
     | "~topic" == content = usage user content
     {-
-    | "~verify" == content = privmsg user "Usage is 'verify <password>'"
     | "~verify " `isPrefixOf` content = verifyNick user usrreal content
+    | "~verify" == content = usage user content
     -}
     -- Before moving on to private command evalation check Addons for any admin
     -- commands (this should always go last)
