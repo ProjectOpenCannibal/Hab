@@ -79,7 +79,7 @@ processquit = do
 -- Regain access if the nick is locked
 regainnick :: Net ()
 regainnick = do
-    password <- io (readFile ".password")
+    password <- io (readFile "../.password")
     write "NICK" "HaskellBot"
     privmsg "nickserv" ("regain "++nick++" "++password)
     privmsg "nickserv" ("regain "++nick++" "++password)

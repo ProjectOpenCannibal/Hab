@@ -83,10 +83,8 @@ evaladcmd user usrreal content
     | "~part" == content = usage user content
     | "~topic " `isPrefixOf` content = write ("TOPIC "++chan) (" :"++drop 7 content)
     | "~topic" == content = usage user content
-    {-
-    | "~verify " `isPrefixOf` content = verifyNick user usrreal content
+    | "~verify " `isPrefixOf` content = verifyNick user usrreal (drop 8 content)
     | "~verify" == content = usage user content
-    -}
     -- Before moving on to private command evalation check Addons for any admin
     -- commands (this should always go last)
     | "~" `isPrefixOf` content = evalAddonsAdmin user usrreal content
