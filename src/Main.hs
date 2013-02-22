@@ -1,4 +1,7 @@
-module Main () where
+module Main (
+    main
+    , runbot
+    ) where
 
 import qualified Control.Exception as E
 import Control.Monad.State
@@ -10,8 +13,10 @@ import Lib.IRC.HabCommands
 import qualified Lib.IRC.HabIRC as IRC
 --import qualified Lib.XMPP.HabXMPP as XMPP
 
-runbot :: IO ()
-runbot =
+runbot = main
+
+main :: IO ()
+main =
     let loop st = E.catch (runStateT run st) (\e -> const (return ((), st)) (e :: E.IOException))
         in E.bracket connect disconnect loop >> return ()
 

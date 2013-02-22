@@ -7,9 +7,16 @@
 \#*#
 
 #
+# ignore haskell related files
+#
+*.hi
+*.o
+
+#
 # ignore additional (non-standard) files
 #
 *.geany
+Main
 
 #
 # git files that we don't want to ignore even if they are dot-files
