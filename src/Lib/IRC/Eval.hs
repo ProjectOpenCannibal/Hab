@@ -77,20 +77,16 @@ eval user usrreal origin msgtype content
                 map <- gets lastUser
                 put $ b { lastUser = Map.insert last (LastUser user) map }
                 -}
-                if isGod user
-                --if isGod user && isAdminConfirmed user usrreal
-                    then evalgodcmd user usrreal content
-                    else if isAdmin user
-                    --else if isAdmin user && isAdminConfirmed user usrreal
-                        then evaladcmd user usrreal content
-                    {-
-                    else if isGod user || isAdmin user
-                        then do
-                            privmsg user "Your nick is recognized as an admin but you are not verified..."
-                            privmsg user "Please verify your nick to use admin commands."
-                            evalprivcmd user content
-                    -}
-                    else evalprivcmd user content
+                {-
+                if isGod user || isAdmin user && isAdminConfirmed user usrreal
+                    then do
+                -}
+                        if isGod user
+                            then evalgodcmd user usrreal content
+                            else if isAdmin user
+                                then evaladcmd user usrreal content
+                            else evalprivcmd user content
+                    --else evalprivcmd user content
             else do
                 updateSeenMap user origin content
                 evalchancmd user origin content

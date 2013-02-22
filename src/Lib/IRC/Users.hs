@@ -9,7 +9,6 @@ import Control.Monad.State
 import Data.List
 import qualified Data.Map as Map
 import qualified Data.Text as T
---import System.IO
 
 --Local modules
 import Lib.IRC.Socket

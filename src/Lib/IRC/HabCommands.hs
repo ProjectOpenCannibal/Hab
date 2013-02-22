@@ -71,10 +71,16 @@ pretty td = join . intersperse " " . filter (not . null) . map f $
     f (i,s) | i == 0    = []
             | otherwise = show i ++ s
 
--- Perform any neccessary actions before logging off/quitting
+-- Perform any neccessary actions before logging off/quitting.
 processquit :: Net ()
 processquit = do
     write "QUIT" ":Reloading, hopefully..." >> io (exitWith ExitSuccess)
+
+-- Prompt admins to verify their nickname.
+prompttoverify :: String -> Net ()
+prompttoverify user = do
+    privmsg user "Your nick is recognized as an admin but you are not verified..."
+    privmsg user "Please verify your nick to use admin commands."
 
 -- Regain access if the nick is locked
 regainnick :: Net ()
@@ -85,7 +91,7 @@ regainnick = do
     privmsg "nickserv" ("regain "++nick++" "++password)
     joinchan chan
 
--- Revoke op privs from a user
+-- Revoke op privs from a user.
 -- (code feels redundant, I don't like breakwords in let...)
 -- ToDo: write a function to grab dest and func regardless of order passed
 revop :: String -> String -> Net ()
@@ -97,7 +103,7 @@ revop user content = let {
           then usage user "~deop"
           else write ("MODE "++(dest content)++" -o") (mode content)
 
--- Check our SeenMap and list when we last saw a given user
+-- Check our SeenMap and list when we last saw a given user.
 seen :: String -> String -> Net ()
 seen user origin = do
     map <- gets seenMap
@@ -107,9 +113,9 @@ seen user origin = do
     foo curTime (SeenEntry o m t) =
         printf "%s was last seen in %s %s ago saying: %s" user o (pretty $ diffClockTimes curTime t) m
 
--- Assign op privs to a user in any channel we have op privs in
+-- Assign op privs to a user in any channel we have op privs in.
 -- (code feels redundant, I don't like breakwords in let...)
--- ToDo: write a function to grab dest and func regardless of order passed
+-- ToDo: write a function to grab dest and func regardless of order passed.
 setop :: String -> String -> Net ()
 setop user content = let {
     breakwords = words
@@ -119,7 +125,7 @@ setop user content = let {
           then usage user "~op"
           else write ("MODE "++(dest content)++" +o") (mode content)
 
--- Update our map of people that we've seen
+-- Update our map of people that we've seen.
 updateSeenMap :: String -> String -> String -> Net ()
 updateSeenMap user origin content = do
     b <- get
@@ -127,7 +133,7 @@ updateSeenMap user origin content = do
     time <- io getClockTime
     put $ b { seenMap = Map.insert user (SeenEntry origin content time) map }
 
--- List all of our usage commands for easy reference
+-- List all of our usage commands for easy reference.
 usage :: String -> String -> Net ()
 usage user content =
     case content of
@@ -153,7 +159,7 @@ usage user content =
         "!seen"   -> privmsg user "Usage: '!seen <nick>'."
         otherwise -> usageAddons user content
 
--- Send a message (to channel or nick)
+-- Send a message (to channel or nick).
 -- (code feels redundant, I don't like breakwords in let...)
 {- Compile Error:
 Lib/IRC/HabCommands.hs:121:21:
