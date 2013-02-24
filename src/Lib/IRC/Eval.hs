@@ -127,7 +127,7 @@ listen h = forever $ do
     ping x = "PING :" `isPrefixOf` x
     pong x = write "PONG" (':' : drop 6 x)
     -- Parse down our strings
-    content = drop 1 . dropWhile (/= ':') . drop 1
+    content x = drop 1 (dropWords 3 x)
     msgtype = (!! 1) . words
     modwho = (!! 4) . words
     modetype = (!! 3) . words

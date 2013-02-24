@@ -1,5 +1,7 @@
 module Lib.IRC.HabCommands (
     action          -- String -> String -> Net ()
+    , dropWord
+    , dropWords
     , identify      -- Net ()
     , mayberejoin   -- String -> Net ()
     , processquit   -- Net ()
@@ -13,6 +15,7 @@ module Lib.IRC.HabCommands (
     ) where
 
 import Control.Monad.State
+import Data.Char
 import Data.List
 import qualified Data.Map as Map
 import qualified Data.Text as T
@@ -38,6 +41,16 @@ action user content = let {
     } in if length (breakwords content) < 2
           then usage user "~action"
           else privmsg (dest content) ("\001ACTION "++(func content)++"\001")
+
+{- Add a function for dropping a word off the front of a string
+   (Thanks ahihi in Haskell IRC on Freenode) -}
+--dropWord :: String
+dropWord = dropWhile isSpace . dropWhile (not . isSpace) . dropWhile isSpace;
+
+{- Drop a number of words from the front of a string
+   (Thanks ahihi in Haskell IRC on Freenode) -}
+--dropWords :: String -> String -> String
+dropWords n s = iterate dropWord s !! n
 
 -- Auto identify on login (uses password stored in local file '../.password')
 identify :: Net ()
