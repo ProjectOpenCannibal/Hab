@@ -8,6 +8,7 @@ import Lib.IRC.Socket
 
 kf1 = "#kindlefire-dev"
 
+root = "http://forum.xda-developers.com/showthread.php?t=1568340"
 kf1guide = "http://forum.xda-developers.com/showthread.php?t=1552547"
 udevsetup = "http://forum.xda-developers.com/showthread.php?t=1475740"
 
@@ -19,5 +20,6 @@ evalKF1Addons user origin content =
     case content of
         -- (keep in alpha)
         "!guide"  -> privmsg origin kf1guide
+        "!root"   -> privmsg origin root
         "!udev"   -> privmsg origin udevsetup
         otherwise -> return ()

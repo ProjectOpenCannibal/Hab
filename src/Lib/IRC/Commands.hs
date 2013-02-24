@@ -8,6 +8,7 @@ module Lib.IRC.Commands (
     , evalgodcmd    -- String -> String -> String -> Net ()
     , evalprivcmd   -- String -> String -> Net ()
     -- Export from HabCommands
+    , dropWords     -- String -> String -> String
     , identify      -- Net ()
     , mayberejoin   -- String -> Net ()
     , regainnick    -- Net ()
