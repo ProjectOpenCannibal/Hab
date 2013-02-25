@@ -12,13 +12,14 @@ import Lib.IRC.Socket
 
 joinAddonChans :: Net ()
 joinAddonChans = do
-    --joinchan kf1
-    --joinchan kf2
-    return ()
+    joinKFchans -- Join the Kindle Fire related channels
 
+{- Non-admin commands are recognized in both private and in-channel messages
+   therefore this can be considered to be user or origin. We call it user here
+   as this is common to admin commands. -}
 listAddons :: String -> Net ()
 listAddons user = do
-    listKindleAddons user
+    listKindleAddons user -- Kindle Fire related commands : treat user as origin
 
 listAddonsAdmin :: String -> Net ()
 listAddonsAdmin user = do

@@ -10,10 +10,9 @@ kf1 = "#kindlefire-dev"
 
 root = "http://forum.xda-developers.com/showthread.php?t=1568340"
 kf1guide = "http://forum.xda-developers.com/showthread.php?t=1552547"
-udevsetup = "http://forum.xda-developers.com/showthread.php?t=1475740"
 
 listKF1Cmds :: String -> Net ()
-listKF1Cmds user = privmsg user "!guide and !udev"
+listKF1Cmds origin = privmsg origin "!guide and !root"
 
 evalKF1Addons :: String -> String -> String -> Net ()
 evalKF1Addons user origin content =
@@ -21,5 +20,4 @@ evalKF1Addons user origin content =
         -- (keep in alpha)
         "!guide"  -> privmsg origin kf1guide
         "!root"   -> privmsg origin root
-        "!udev"   -> privmsg origin udevsetup
         otherwise -> return ()
