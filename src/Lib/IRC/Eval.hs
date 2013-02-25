@@ -57,7 +57,8 @@ eval user usrreal origin msgtype content
     -}
     | "433" == msgtype = regainnick
     | "437" == msgtype = regainnick
-    -- Check 'NOTICE' messages prior to 'PRIVMSG'
+    -- Check non-numeric types in aphabetical order.
+    | "JOIN" == msgtype = updateSeenMap user origin "***Joined channel.***"
     | "NOTICE" == msgtype
         = let {
             -- Used for identification.
@@ -67,7 +68,7 @@ eval user usrreal origin msgtype content
         in if isPriv origin && isIdRequest content && user == "NickServ"
             then identify
             else return ()
-    -- Confirm the type instead of switching on all messages.
+    | "PART" == msgtype = updateSeenMap user origin "***Left channel.***"
     | "PRIVMSG" ==  msgtype
         = if isPriv origin
             then do
@@ -90,6 +91,7 @@ eval user usrreal origin msgtype content
             else do
                 updateSeenMap user origin content
                 evalchancmd user origin content
+    | "QUIT" == msgtype = updateSeenMap user origin content
     | otherwise = return ()
 
 -- Evaluate a MODE change

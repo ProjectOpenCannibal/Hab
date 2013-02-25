@@ -38,7 +38,7 @@ listKindleAddons origin =
 
 evalKindleAddons :: String -> String -> String -> Net ()
 evalKindleAddons user origin content =
-    if origin == kf1 || origin == kf2
+    if isKindle origin
         then case content of
             "!factory cable" -> privmsg origin factorycable
             "!udev"          -> privmsg origin udevsetup
