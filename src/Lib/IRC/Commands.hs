@@ -8,7 +8,7 @@ module Lib.IRC.Commands (
     , evalgodcmd    -- String -> String -> String -> Net ()
     , evalprivcmd   -- String -> String -> Net ()
     -- Export from HabCommands
-    , dropWords     -- String -> String -> String
+    , dropWords
     , identify      -- Net ()
     , mayberejoin   -- String -> Net ()
     , regainnick    -- Net ()
@@ -74,8 +74,7 @@ evaladcmd user usrreal content
     | "~kick" == content = usage user content
     | "~me " `isPrefixOf` content = action user (drop 4 content)
     | "~me" == content = usage user content
-    -- | "~msg " `isPrefixOf` content = usrmsg user (drop 5 content)
-    | "~msg " `isPrefixOf` content = privmsg user (drop 5 content)
+    | "~msg " `isPrefixOf` content = usrmsg user (drop 5 content)
     | "~msg" == content = usage user content
     | "~op " `isPrefixOf` content = setop user (drop 4 content)
     | "~op" == content = usage user content
